@@ -16,7 +16,7 @@ You can download the latest ready-to-use APK directly from the releases:
 👉 **[Download Latest APK from Releases](../../releases)**
 
 1. Go to the [Releases](../../releases) page.
-2. Download the `app-debug.apk` file from the latest release.
+2. Download the `.apk' from the latest release.
 3. Install it on your Android device and start learning!
 
 ---
@@ -51,8 +51,6 @@ To unlock advanced features such as **AI-powered course generation**, **automate
 2. **🖼️ Pexels API Key**:
    - **Used for:** Fetching high-quality contextual images for words to enhance visual memory retention.
    - **How to get:** Register a free developer account on [Pexels API](https://www.pexels.com/api/).
-
-*(Alternatively, if building from source, you can add them to your `local.properties` file in the project root: `GEMINI_API_KEY=...`, `OPENAI_API_KEY=...`, `PEXELS_API_KEY=...`)*
 
 ---
 

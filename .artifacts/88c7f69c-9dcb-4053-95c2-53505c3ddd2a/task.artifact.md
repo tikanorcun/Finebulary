@@ -1,0 +1,7 @@
+- [x] Update UserPreferences with notification settings (time range, frequency, selected folders)
+- [x] Add Room DAO and Repository queries for fetching words by course IDs
+- [x] Enhance ReminderWorker to pick random words from selected folders and build rich notifications
+- [x] Implement word detail overlay / Bottom Sheet UI component (leveraging existing WordDetailsBottomSheet)
+- [x] Wire up notification tap handling in MainActivity to launch word detail overlay
+- [x] Add notification settings UI in app settings (time range and folder selection)
+- [x] Build verification and testing

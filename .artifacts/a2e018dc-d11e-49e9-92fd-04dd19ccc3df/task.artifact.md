@@ -1,0 +1,5 @@
+- [ ] Veritabanı Migration güvenliğinin artırılması (`AppDatabase.kt`)
+- [ ] AI Yanıt temizleme yardımcı sınıfının (`JsonCleaner.kt`) oluşturulması
+- [ ] Sağlayıcıların (`GeminiProvider.kt`, `OpenAiCompatibleProvider.kt`) `JsonCleaner` ile güncellenmesi
+- [ ] UI/UX haptic feedback ve insets iyileştirmelerinin yapılması
+- [ ] Gradle build ve doğrulama testlerinin çalıştırılması

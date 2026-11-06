@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Glowing Book in the Background (within safe zone) -->
+    <path
+        android:pathData="M54,65 L44,55 Q54,45 64,55 Z"
+        android:fillAlpha="0.6">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:centerX="54"
+                android:centerY="55"
+                android:gradientRadius="15"
+                android:type="radial">
+                <item android:color="#FFFFFF" android:offset="0" />
+                <item android:color="#00FFFFFF" android:offset="1" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <path
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round"
+        android:pathData="M54,65 L44,55 L44,45 M54,65 L64,55 L64,45"
+        android:fillColor="#00000000" />
+
+    <!-- Deep Shadow for Script F -->
+    <path
+        android:fillColor="#33000000"
+        android:pathData="M42,32 c-5,-5 -15,-2 -15,10 c0,18 18,40 38,40 c10,0 15,-8 15,-15 c0,-10 -8,-12 -15,-12 c-10,0 -15,10 -15,18 c0,5 2,8 6,8 c8,0 15,-12 15,-25 c0,-12 -8,-22 -22,-22 c-5,0 -10,3 -12,6 c-2,-10 -10,-15 -20,-15 v4 c10,0 12,5 12,15 v45 l5,0 v-45 c0,-5 -1,-8 -4,-8 z" />
+
+    <!-- Main Elegant Script F (as seen in image) -->
+    <path
+        android:pathData="M40,30 c-5,-5 -15,-2 -15,10 c0,18 18,40 38,40 c10,0 15,-8 15,-15 c0,-10 -8,-12 -15,-12 c-10,0 -15,10 -15,18 c0,5 2,8 6,8 c8,0 15,-12 15,-25 c0,-12 -8,-22 -22,-22 c-5,0 -10,3 -12,6 c-2,-10 -10,-15 -20,-15 v4 c10,0 12,5 12,15 v45 l5,0 v-45 c0,-5 -1,-8 -4,-8 z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:startX="25"
+                android:startY="30"
+                android:endX="70"
+                android:endY="80"
+                android:type="linear">
+                <item android:color="#FFFFFF" android:offset="0" />
+                <item android:color="#FFEDD5" android:offset="1" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Edge Highlight for 3D look -->
+    <path
+        android:fillColor="#15FFFFFF"
+        android:pathData="M40,30 c-3,-3 -8,-2 -10,2 l2,2 c1,-1 3,0 4,2 c12,18 32,35 45,35 v-3 c-12,0 -30,-15 -41,-36 z" />
+
+</vector>

@@ -16,7 +16,7 @@ You can download the latest ready-to-use APK directly from the releases:
 👉 **[Download Latest APK from Releases](../../releases)**
 
 1. Go to the [Releases](../../releases) page.
-2. Download the `app-debug.apk` file from the latest release.
+2. Download the `.apk' from the latest release.
 3. Install it on your Android device and start learning!
 
 ---

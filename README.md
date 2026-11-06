@@ -52,8 +52,6 @@ To unlock advanced features such as **AI-powered course generation**, **automate
    - **Used for:** Fetching high-quality contextual images for words to enhance visual memory retention.
    - **How to get:** Register a free developer account on [Pexels API](https://www.pexels.com/api/).
 
-*(Alternatively, if building from source, you can add them to your `local.properties` file in the project root: `GEMINI_API_KEY=...`, `OPENAI_API_KEY=...`, `PEXELS_API_KEY=...`)*
-
 ---
 
 ## 📄 License

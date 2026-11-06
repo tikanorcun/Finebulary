@@ -11,7 +11,7 @@
 
 ## 📥 Download & Install
 
-Ready to start learning? You can download the latest ready-to-use APK directly from the releases:
+You can download the latest ready-to-use APK directly from the releases:
 
 👉 **[Download Latest APK from Releases](../../releases)**
 
@@ -21,14 +21,38 @@ Ready to start learning? You can download the latest ready-to-use APK directly f
 
 ---
 
-## ✨ Core Features
+## 🧭 App Menus & Navigation
 
-- 🧠 **Smart Vocabulary Review**: Spaced repetition algorithm to help you review words efficiently and retain them in long-term memory.
-- 🤖 **AI-Powered Learning**: Automated word definitions, example sentences, synonyms, and contextual learning.
-- 📖 **IELTS Reading Passages**: Read curated IELTS passages with integrated vocabulary extraction and translation tools.
-- 🔔 **Smart Daily Reminders**: Background notifications that prompt you with random words or due review counts throughout the day.
-- ⚡ **Quick Add Service**: Instant access to add new words on the go.
-- 🔊 **Text-to-Speech**: Native audio pronunciation for every word.
+Finebulary is designed with an intuitive and clean Material 3 interface. Here is an overview of the main menus and screens:
+
+- **🏠 Home Screen**: Your learning dashboard. View daily statistics, quick progress summaries, and jump right into your study sessions.
+- **🧠 Review Screen**: Spaced repetition review sessions to test your memory, reinforce weak words, and move items into long-term memory.
+- **📖 Academy / IELTS Reading**: Curated academic reading passages designed for advanced learners and IELTS preparation, complete with instant vocabulary extraction.
+- **🤖 AI Course Generator**: Create custom learning courses powered by artificial intelligence tailored to your specific goals and proficiency level *(Requires API Key)*.
+- **⚙️ Settings & API Configuration**: Manage your preferences, backups, and configure your API keys for advanced features.
+
+---
+
+## 🔑 Configuration & API Keys (Unlocking Full Features)
+
+### 🟢 What works WITHOUT API Keys?
+Out of the box, you can fully use core features such as:
+- Manual vocabulary entry and organization
+- Spaced repetition review sessions (`Review Screen`)
+- Tracking your daily learning progress and statistics
+- Reading local content and app navigation
+
+### 🤖 What requires API Keys?
+To unlock advanced features such as **AI-powered course generation**, **automated definitions/example sentences**, and **Pexels contextual images**, you can easily configure your keys inside the app's **Settings > API Keys** menu:
+
+1. **🤖 Gemini API Key / OpenAI API Key**: 
+   - **Used for:** AI-powered word definitions, example sentences, synonyms, and custom AI course generation.
+   - **How to get:** Obtain a free API key from [Google AI Studio (Gemini)](https://aistudio.google.com/) or OpenAI.
+2. **🖼️ Pexels API Key**:
+   - **Used for:** Fetching high-quality contextual images for words to enhance visual memory retention.
+   - **How to get:** Register a free developer account on [Pexels API](https://www.pexels.com/api/).
+
+*(Alternatively, if building from source, you can add them to your `local.properties` file in the project root: `GEMINI_API_KEY=...`, `OPENAI_API_KEY=...`, `PEXELS_API_KEY=...`)*
 
 ---
 

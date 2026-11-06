@@ -106,4 +106,15 @@ object AppModule {
             .build()
             .create(com.language.finebulary.data.api.OpenAiApiService::class.java)
     }
+
+    @Provides
+    @Singleton
+    fun provideGitHubApi(client: OkHttpClient): com.language.finebulary.data.api.GitHubApiService {
+        return Retrofit.Builder()
+            .baseUrl("https://api.github.com/")
+            .client(client)
+            .addConverterFactory(retrofit2.converter.gson.GsonConverterFactory.create())
+            .build()
+            .create(com.language.finebulary.data.api.GitHubApiService::class.java)
+    }
 }

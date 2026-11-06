@@ -22,6 +22,11 @@ import com.language.finebulary.util.TranslationManager
 import com.language.finebulary.util.AiServiceProvider
 import com.language.finebulary.util.ProviderRegistry
 import com.language.finebulary.BuildConfig
+import com.language.finebulary.util.UpdateManager
+import com.language.finebulary.data.api.GitHubRelease
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
@@ -44,7 +49,43 @@ class HomeViewModel @Inject constructor(
     private val updateWordStatusUseCase: UpdateWordStatusUseCase,
     private val detectLanguageUseCase: DetectLanguageUseCase,
     private val getRecommendedCourseUseCase: GetRecommendedCourseUseCase,
+    private val updateManager: UpdateManager,
 ) : ViewModel() {
+
+    private val _isCheckingUpdate = MutableStateFlow(false)
+    val isCheckingUpdate: StateFlow<Boolean> = _isCheckingUpdate.asStateFlow()
+
+    private val _availableUpdate = MutableStateFlow<GitHubRelease?>(null)
+    val availableUpdate: StateFlow<GitHubRelease?> = _availableUpdate.asStateFlow()
+
+    fun checkForUpdates(context: Context, onUpToDate: () -> Unit = {}) {
+        viewModelScope.launch {
+            _isCheckingUpdate.value = true
+            val release = updateManager.checkForUpdate()
+            _isCheckingUpdate.value = false
+            if (release != null) {
+                _availableUpdate.value = release
+            } else {
+                onUpToDate()
+            }
+        }
+    }
+
+    fun clearAvailableUpdate() {
+        _availableUpdate.value = null
+    }
+
+    fun downloadAndInstallUpdate(context: Context, release: GitHubRelease) {
+        val apkAsset = release.assets?.find { it.name.endsWith(".apk", ignoreCase = true) }
+            ?: release.assets?.firstOrNull()
+
+        if (apkAsset != null) {
+            updateManager.downloadAndInstallApk(context, apkAsset.browserDownloadUrl, release.tagName)
+        } else if (!release.htmlUrl.isNullOrEmpty()) {
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(release.htmlUrl))
+            context.startActivity(intent)
+        }
+    }
 
     val themeMode: StateFlow<ThemeMode> = userPreferences.themeMode
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), ThemeMode.AUTO)

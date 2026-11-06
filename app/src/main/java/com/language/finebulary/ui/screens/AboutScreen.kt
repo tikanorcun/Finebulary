@@ -1,16 +1,19 @@
 package com.language.finebulary.ui.screens
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.SystemUpdate
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -19,13 +22,53 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.language.finebulary.BuildConfig
 import com.language.finebulary.R
+import com.language.finebulary.ui.viewmodel.HomeViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AboutScreen(
+    viewModel: HomeViewModel,
     onBack: () -> Unit,
     onViewChangelog: () -> Unit,
 ) {
+    val context = LocalContext.current
+    val isChecking by viewModel.isCheckingUpdate.collectAsState()
+    val availableUpdate by viewModel.availableUpdate.collectAsState()
+
+    val upToDateMsg = "You are using the latest version!"
+
+    if (availableUpdate != null) {
+        val release = availableUpdate!!
+        AlertDialog(
+            onDismissRequest = { viewModel.clearAvailableUpdate() },
+            title = { Text("Update Available: ${release.tagName}") },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text(release.name ?: "A new version of Finebulary is available.")
+                    if (!release.body.isNullOrEmpty()) {
+                        Spacer(Modifier.height(4.dp))
+                        Text(release.body, style = MaterialTheme.typography.bodySmall)
+                    }
+                }
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        viewModel.downloadAndInstallUpdate(context, release)
+                        viewModel.clearAvailableUpdate()
+                    }
+                ) {
+                    Text("Download & Update")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { viewModel.clearAvailableUpdate() }) {
+                    Text("Later")
+                }
+            }
+        )
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -49,7 +92,7 @@ fun AboutScreen(
                 .padding(24.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(Modifier.height(48.dp))
+            Spacer(Modifier.height(32.dp))
 
             // App Icon
             Surface(
@@ -94,11 +137,38 @@ fun AboutScreen(
 
             Spacer(Modifier.weight(1f))
 
+            // Check for Updates Button
+            Button(
+                onClick = {
+                    viewModel.checkForUpdates(context) {
+                        Toast.makeText(context, upToDateMsg, Toast.LENGTH_SHORT).show()
+                    }
+                },
+                enabled = !isChecking,
+                modifier = Modifier
+                    .padding(bottom = 16.dp)
+                    .height(56.dp)
+                    .fillMaxWidth(0.7f),
+                shape = MaterialTheme.shapes.medium,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary
+                )
+            ) {
+                if (isChecking) {
+                    CircularProgressIndicator(modifier = Modifier.size(24.dp), color = MaterialTheme.colorScheme.onPrimary)
+                } else {
+                    Icon(Icons.Default.SystemUpdate, null, modifier = Modifier.size(20.dp))
+                    Spacer(Modifier.width(12.dp))
+                    Text("Check for Updates", fontWeight = FontWeight.Bold)
+                }
+            }
+
             // Changelog Button at the bottom
             Button(
                 onClick = onViewChangelog,
                 modifier = Modifier
-                    .padding(bottom = 32.dp)
+                    .padding(bottom = 24.dp)
                     .height(56.dp)
                     .fillMaxWidth(0.7f),
                 shape = MaterialTheme.shapes.medium,

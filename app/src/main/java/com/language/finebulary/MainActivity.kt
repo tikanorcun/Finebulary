@@ -276,6 +276,7 @@ class MainActivity : AppCompatActivity() {
                             }
                             composable("about") {
                                 AboutScreen(
+                                    viewModel = homeViewModel,
                                     onBack = { navController.popBackStack() },
                                     onViewChangelog = { homeViewModel.forceShowChangelog() }
                                 )

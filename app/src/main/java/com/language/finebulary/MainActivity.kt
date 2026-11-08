@@ -405,12 +405,26 @@ class MainActivity : AppCompatActivity() {
                     val selectedWordForOverlay by homeViewModel.selectedWordForOverlay.collectAsState()
                     if (selectedWordForOverlay != null) {
                         val word = selectedWordForOverlay!!
+                        var showEditDialog by remember { mutableStateOf(false) }
+
                         WordDetailsBottomSheet(
                             word = word,
                             reviewState = null,
-                            onEdit = {},
+                            onEdit = { showEditDialog = true },
                             onDismiss = { homeViewModel.clearWordForOverlay() }
                         )
+
+                        if (showEditDialog) {
+                            EditWordDialog(
+                                word = word,
+                                onDismiss = { showEditDialog = false },
+                                onConfirm = { updatedWord ->
+                                    homeViewModel.updateWord(updatedWord)
+                                    showEditDialog = false
+                                    homeViewModel.clearWordForOverlay()
+                                }
+                            )
+                        }
                     }
                 }
             }

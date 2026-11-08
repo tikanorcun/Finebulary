@@ -23,11 +23,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.material.icons.automirrored.filled.VolumeUp
 import coil.compose.AsyncImage
 import com.language.finebulary.R
 import com.language.finebulary.data.model.Course
 import com.language.finebulary.ui.viewmodel.TranslationState
 import com.language.finebulary.util.RichWordDetails
+import com.language.finebulary.util.TtsManager
 
 @Composable
 fun AddWordDialog(
@@ -169,12 +172,22 @@ fun AddWordDialog(
                     shape = MaterialTheme.shapes.small,
                     singleLine = true,
                     trailingIcon = {
-                        IconButton(onClick = {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
                             if (front.isNotBlank()) {
-                                onTranslate(front, course.targetLanguageCode, course.nativeLanguageCode)
+                                IconButton(onClick = { TtsManager.speak(front) }) {
+                                    Icon(Icons.AutoMirrored.Filled.VolumeUp, contentDescription = "Listen", tint = MaterialTheme.colorScheme.primary)
+                                }
+                                IconButton(onClick = { TtsManager.speak(front, isSlow = true) }) {
+                                    Text("🐢", fontSize = 18.sp)
+                                }
                             }
-                        }) {
-                            Icon(Icons.Default.Refresh, contentDescription = stringResource(R.string.auto_translate), tint = MaterialTheme.colorScheme.primary)
+                            IconButton(onClick = {
+                                if (front.isNotBlank()) {
+                                    onTranslate(front, course.targetLanguageCode, course.nativeLanguageCode)
+                                }
+                            }) {
+                                Icon(Icons.Default.Refresh, contentDescription = stringResource(R.string.auto_translate), tint = MaterialTheme.colorScheme.primary)
+                            }
                         }
                     },
                     keyboardActions = KeyboardActions(onDone = {

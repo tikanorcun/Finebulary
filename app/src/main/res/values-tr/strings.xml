@@ -250,6 +250,11 @@
     <string name="base_form_label">Kelime Kökü: %1$s</string>
     <string name="root_word_label">Düzeltme: %1$s</string>
 
+    <!-- Changelog v2.1 -->
+    <string name="changelog_v2_1_title">Sürüm 2.1 - Telaffuz Desteği ve İyileştirmeler</string>
+    <string name="changelog_v2_1_item_1">Kelime ekleme arayüzüne anında normal ve yavaş (kaplumbağa) sesli telaffuz düğmeleri eklendi</string>
+    <string name="changelog_v2_1_item_2">Bildirimlerden açılan kelime detay ekranında "Edit Word" düzenleme butonunun çalışmama sorunu giderildi</string>
+
     <!-- Changelog v2.0 -->
     <string name="changelog_v2_0_title">Sürüm 2.0 - Yapay Zeka Destekli Dil Öğrenme Devrimi</string>
     <string name="changelog_v2_0_item_1">Tamamen Yenilenen Arayüz ve Material 3 Tasarımı</string>

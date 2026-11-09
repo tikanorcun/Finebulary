@@ -58,11 +58,16 @@ class CourseRepository(private val vocabularyDao: VocabularyDao) {
         antonyms: String? = null,
         example: String? = null,
         imageUrl: String? = null
-    ) {
+    ): Boolean {
+        val existingWords = vocabularyDao.getAllWordsRaw().filter { it.courseId == courseId }
+        val trimmedFront = front.trim()
+        if (existingWords.any { it.front.trim().equals(trimmedFront, ignoreCase = true) }) {
+            return false
+        }
         val wordId = vocabularyDao.insertWord(
             Word(
                 courseId = courseId, 
-                front = front, 
+                front = trimmedFront, 
                 backsPacked = backsPacked,
                 definition = definition,
                 synonyms = synonyms,
@@ -72,6 +77,7 @@ class CourseRepository(private val vocabularyDao: VocabularyDao) {
             )
         )
         vocabularyDao.insertReviewState(ReviewState(wordId = wordId))
+        return true
     }
 
     suspend fun updateWord(word: Word) {

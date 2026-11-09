@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.widget.Toast
 import android.provider.Settings
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
@@ -157,10 +158,13 @@ class MainActivity : AppCompatActivity() {
                     val incomingText by homeViewModel.incomingSharedText.collectAsState()
                     val isOnboardingCompleted by homeViewModel.isOnboardingCompleted.collectAsState()
                     val showChangelog by homeViewModel.showChangelog.collectAsState()
+                    val hasSeenTutorial by homeViewModel.hasSeenAppTutorial.collectAsState()
                     val exampleSentenceSource by homeViewModel.exampleSentenceSource.collectAsState()
 
                     if (showChangelog) {
                         ChangelogDialog(onDismiss = { homeViewModel.dismissChangelog() })
+                    } else if (isOnboardingCompleted && !hasSeenTutorial) {
+                        AppTutorialDialog(onFinish = { homeViewModel.setHasSeenAppTutorial(true) })
                     }
 
                     LaunchedEffect(incomingText) {
@@ -388,7 +392,13 @@ class MainActivity : AppCompatActivity() {
                                     homeViewModel.clearTranslationState()
                                 },
                                 onConfirm = { front, back, definition, synonyms, antonyms, example, imageUrl ->
-                                    homeViewModel.addManualWord(folderToUse.id, front, back, definition, synonyms, antonyms, example, imageUrl)
+                                    homeViewModel.addManualWord(folderToUse.id, front, back, definition, synonyms, antonyms, example, imageUrl) { success ->
+                                        if (!success) {
+                                            Toast.makeText(this@MainActivity, "Bu kelime zaten bu klasörde mevcut!", Toast.LENGTH_SHORT).show()
+                                        } else {
+                                            Toast.makeText(this@MainActivity, "Kelime eklendi", Toast.LENGTH_SHORT).show()
+                                        }
+                                    }
                                     showAddWordDialog = false
                                     homeViewModel.clearIncomingText()
                                 },

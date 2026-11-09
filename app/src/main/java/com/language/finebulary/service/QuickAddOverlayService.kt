@@ -200,10 +200,14 @@ class QuickAddOverlayService : Service(), LifecycleOwner, SavedStateRegistryOwne
                                     onDismiss = { stopSelf() },
                                     onConfirm = { front, back, definition, synonyms, antonyms, example, imageUrl ->
                                         serviceScope.launch(Dispatchers.IO) {
-                                            repo.addSingleWord(selectedCourse!!.id, front, back, definition, synonyms, antonyms, example, imageUrl)
+                                            val success = repo.addSingleWord(selectedCourse!!.id, front, back, definition, synonyms, antonyms, example, imageUrl)
                                             withContext(Dispatchers.Main) {
-                                                Toast.makeText(context, R.string.course_created, Toast.LENGTH_SHORT).show()
-                                                stopSelf()
+                                                if (!success) {
+                                                    Toast.makeText(context, "Bu kelime zaten bu klasörde mevcut!", Toast.LENGTH_SHORT).show()
+                                                } else {
+                                                    Toast.makeText(context, "Kelime eklendi", Toast.LENGTH_SHORT).show()
+                                                    stopSelf()
+                                                }
                                             }
                                         }
                                     },

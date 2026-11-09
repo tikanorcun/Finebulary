@@ -21,6 +21,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.HelpOutline
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -92,7 +93,12 @@ fun ApiKeysScreen(
                 description = stringResource(R.string.visual_learning_desc),
                 currentKey = pexelsKey ?: "",
                 onSave = { viewModel.setPexelsApiKey(it); Toast.makeText(context, keysSavedMsg, Toast.LENGTH_SHORT).show() },
-                getApiKeyUrl = "https://www.pexels.com/api/new/"
+                getApiKeyUrl = "https://www.pexels.com/api/new/",
+                guideSteps = listOf(
+                    "Pexels.com web sitesine gidin ve ücretsiz hesap oluşturun.",
+                    "API > New API Key bölümüne gidin.",
+                    "Oluşturduğunuz anahtarı kopyalayıp buraya yapıştırın."
+                )
             )
 
             HorizontalDivider()
@@ -398,7 +404,12 @@ fun ApiKeysScreen(
                             description = stringResource(R.string.ai_generate_desc),
                             currentKey = geminiKey ?: "",
                             onSave = { viewModel.setGeminiApiKey(it); Toast.makeText(context, keysSavedMsg, Toast.LENGTH_SHORT).show() },
-                            getApiKeyUrl = "https://aistudio.google.com/app/apikey"
+                            getApiKeyUrl = "https://aistudio.google.com/app/apikey",
+                            guideSteps = listOf(
+                                "aistudio.google.com adresine gidin ve Google hesabınızla oturum açın.",
+                                "Sol üst köşedeki 'Get API Key' butonuna tıklayın.",
+                                "Ücretsiz API anahtarınızı oluşturup kopyalayın."
+                            )
                         )
                     }
                     AiServiceProvider.GROQ -> {
@@ -407,7 +418,12 @@ fun ApiKeysScreen(
                             description = "Blazing fast inference. Very high limits for free tier.",
                             currentKey = groqKey ?: "",
                             onSave = { viewModel.setGroqApiKey(it); Toast.makeText(context, keysSavedMsg, Toast.LENGTH_SHORT).show() },
-                            getApiKeyUrl = "https://console.groq.com/keys"
+                            getApiKeyUrl = "https://console.groq.com/keys",
+                            guideSteps = listOf(
+                                "console.groq.com adresine gidin ve hesap açın.",
+                                "API Keys menüsünden 'Create API Key' butonuna basın.",
+                                "Oluşan anahtarı kopyalayıp buraya yapıştırın."
+                            )
                         )
                     }
                     AiServiceProvider.OPENAI -> {
@@ -416,7 +432,12 @@ fun ApiKeysScreen(
                             description = "The industry standard for quality. Requires prepaid balance.",
                             currentKey = openaiKey ?: "",
                             onSave = { viewModel.setOpenAiApiKey(it); Toast.makeText(context, keysSavedMsg, Toast.LENGTH_SHORT).show() },
-                            getApiKeyUrl = "https://platform.openai.com/api-keys"
+                            getApiKeyUrl = "https://platform.openai.com/api-keys",
+                            guideSteps = listOf(
+                                "platform.openai.com/api-keys adresine gidin.",
+                                "'Create new secret key' butonuna tıklayarak anahtarınızı oluşturun.",
+                                "Not: OpenAI kullanımı için hesapta bakiye bulunmalıdır."
+                            )
                         )
                     }
                     AiServiceProvider.DEEPSEEK -> {
@@ -425,7 +446,11 @@ fun ApiKeysScreen(
                             description = "Extremely low cost with high performance.",
                             currentKey = deepseekKey ?: "",
                             onSave = { viewModel.setDeepseekApiKey(it); Toast.makeText(context, keysSavedMsg, Toast.LENGTH_SHORT).show() },
-                            getApiKeyUrl = "https://platform.deepseek.com/"
+                            getApiKeyUrl = "https://platform.deepseek.com/",
+                            guideSteps = listOf(
+                                "platform.deepseek.com adresine gidin ve oturum açın.",
+                                "API Keys sekmesinden yeni bir anahtar oluşturun ve kopyalayın."
+                            )
                         )
                     }
                     AiServiceProvider.OPENROUTER -> {
@@ -434,7 +459,11 @@ fun ApiKeysScreen(
                             description = "Access any model (Claude, GPT-4, Llama) through a single API key. Recommended for flexibility.",
                             currentKey = openrouterKey ?: "",
                             onSave = { viewModel.setOpenrouterApiKey(it); Toast.makeText(context, keysSavedMsg, Toast.LENGTH_SHORT).show() },
-                            getApiKeyUrl = "https://openrouter.ai/keys"
+                            getApiKeyUrl = "https://openrouter.ai/keys",
+                            guideSteps = listOf(
+                                "openrouter.ai/keys adresine gidin.",
+                                "'Create Key' butonuna basarak tüm modeller için ortak anahtarınızı oluşturun."
+                            )
                         )
                     }
                 }
@@ -523,15 +552,48 @@ fun ApiKeySection(
     description: String,
     currentKey: String,
     onSave: (String) -> Unit,
-    getApiKeyUrl: String
+    getApiKeyUrl: String,
+    guideSteps: List<String> = emptyList()
 ) {
     val context = LocalContext.current
     var tempKey by remember(currentKey) { mutableStateOf(currentKey) }
     var isVisible by remember { mutableStateOf(false) }
+    var showGuide by remember { mutableStateOf(false) }
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text(title, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(title, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+            if (guideSteps.isNotEmpty()) {
+                TextButton(onClick = { showGuide = !showGuide }) {
+                    Icon(Icons.AutoMirrored.Filled.HelpOutline, null, modifier = Modifier.size(16.dp))
+                    Spacer(Modifier.width(4.dp))
+                    Text(if (showGuide) "Rehberi Gizle" else "💡 Nasıl Alınır?", fontSize = 12.sp)
+                }
+            }
+        }
         Text(description, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.secondary)
+
+        if (showGuide && guideSteps.isNotEmpty()) {
+            Surface(
+                color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f),
+                shape = MaterialTheme.shapes.small,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Column(
+                    modifier = Modifier.padding(12.dp),
+                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    Text("Adım Adım Rehber:", style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
+                    guideSteps.forEachIndexed { index, step ->
+                        Text("${index + 1}. $step", style = MaterialTheme.typography.bodySmall)
+                    }
+                }
+            }
+        }
 
         OutlinedTextField(
             value = tempKey,

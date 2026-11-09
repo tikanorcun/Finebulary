@@ -6,15 +6,18 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
+import com.language.finebulary.data.pref.FolderViewStyle
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.automirrored.filled.ViewList
 import androidx.compose.material3.*
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.runtime.*
@@ -72,6 +75,8 @@ fun HomeScreen(
     var showAiDialog by remember { mutableStateOf(false) }
     val incomingSharedText by viewModel.incomingSharedText.collectAsState()
     var courseToDelete by remember { mutableStateOf<Course?>(null) }
+    var courseToRename by remember { mutableStateOf<Course?>(null) }
+    val folderViewStyle by viewModel.folderViewStyle.collectAsState()
     val nativeLanguage by viewModel.nativeLanguage.collectAsState()
     val aiState by viewModel.aiGenerationState.collectAsState()
     
@@ -115,6 +120,18 @@ fun HomeScreen(
         topBar = {
             TopAppBar(
                 title = { Text(title, fontWeight = FontWeight.Bold) },
+                actions = {
+                    IconButton(onClick = {
+                        viewModel.setFolderViewStyle(
+                            if (folderViewStyle == FolderViewStyle.GRID) FolderViewStyle.LIST else FolderViewStyle.GRID
+                        )
+                    }) {
+                        Icon(
+                            imageVector = if (folderViewStyle == FolderViewStyle.GRID) Icons.AutoMirrored.Filled.ViewList else Icons.Default.GridView,
+                            contentDescription = "Toggle View"
+                        )
+                    }
+                },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background)
             )
         },
@@ -156,20 +173,39 @@ fun HomeScreen(
                 )
             }
         } else {
-            LazyVerticalGrid(
-                columns = GridCells.Adaptive(minSize = 160.dp),
-                modifier = Modifier.fillMaxSize().padding(padding),
-                contentPadding = PaddingValues(16.dp),
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                items(courses) { item ->
-                    CourseCard(
-                        course = item.course,
-                        wordCount = item.wordCount,
-                        onClick = { onCourseClick(item.course) },
-                        onDelete = { courseToDelete = item.course }
-                    )
+            if (folderViewStyle == FolderViewStyle.GRID) {
+                LazyVerticalGrid(
+                    columns = GridCells.Adaptive(minSize = 160.dp),
+                    modifier = Modifier.fillMaxSize().padding(padding),
+                    contentPadding = PaddingValues(16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    items(courses) { item ->
+                        CourseCard(
+                            course = item.course,
+                            wordCount = item.wordCount,
+                            onClick = { onCourseClick(item.course) },
+                            onDelete = { courseToDelete = item.course },
+                            onRename = { courseToRename = item.course }
+                        )
+                    }
+                }
+            } else {
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize().padding(padding),
+                    contentPadding = PaddingValues(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    items(courses) { item ->
+                        CourseListItem(
+                            course = item.course,
+                            wordCount = item.wordCount,
+                            onClick = { onCourseClick(item.course) },
+                            onDelete = { courseToDelete = item.course },
+                            onRename = { courseToRename = item.course }
+                        )
+                    }
                 }
             }
         }
@@ -182,6 +218,17 @@ fun HomeScreen(
             onDismiss = { 
                 viewModel.clearTranslationState()
                 viewModel.clearIncomingText()
+            }
+        )
+    }
+
+    if (courseToRename != null) {
+        RenameFolderDialog(
+            course = courseToRename!!,
+            onDismiss = { courseToRename = null },
+            onConfirm = { newName ->
+                viewModel.renameCourse(courseToRename!!, newName)
+                courseToRename = null
             }
         )
     }
@@ -590,7 +637,7 @@ fun AddFolderDialog(
 }
 
 @Composable
-fun CourseCard(course: Course, wordCount: Int, onClick: () -> Unit, onDelete: () -> Unit) {
+fun CourseCard(course: Course, wordCount: Int, onClick: () -> Unit, onDelete: () -> Unit, onRename: () -> Unit) {
     var showMenu by remember { mutableStateOf(false) }
 
     ElevatedCard(
@@ -672,6 +719,14 @@ fun CourseCard(course: Course, wordCount: Int, onClick: () -> Unit, onDelete: ()
                     onDismissRequest = { showMenu = false }
                 ) {
                     DropdownMenuItem(
+                        text = { Text(stringResource(R.string.rename_folder)) },
+                        leadingIcon = { Icon(Icons.Default.Edit, null) },
+                        onClick = {
+                            showMenu = false
+                            onRename()
+                        }
+                    )
+                    DropdownMenuItem(
                         text = { Text(stringResource(R.string.delete), color = MaterialTheme.colorScheme.error) },
                         leadingIcon = { Icon(Icons.Default.Delete, null, tint = MaterialTheme.colorScheme.error) },
                         onClick = {
@@ -683,6 +738,122 @@ fun CourseCard(course: Course, wordCount: Int, onClick: () -> Unit, onDelete: ()
             }
         }
     }
+}
+
+@Composable
+fun CourseListItem(course: Course, wordCount: Int, onClick: () -> Unit, onDelete: () -> Unit, onRename: () -> Unit) {
+    var showMenu by remember { mutableStateOf(false) }
+
+    ElevatedCard(
+        onClick = onClick,
+        modifier = Modifier.fillMaxWidth(),
+        shape = MaterialTheme.shapes.large,
+        colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.surface),
+        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 2.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(48.dp)
+                    .background(MaterialTheme.colorScheme.primaryContainer, CircleShape),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(getLanguageEmoji(course.targetLanguageCode), fontSize = 24.sp)
+            }
+
+            Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                Text(
+                    text = course.name,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    maxLines = 1
+                )
+                Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = "📚 $wordCount kelime",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                    Text(
+                        text = "🔥 ${course.currentStreak} gün",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.secondary
+                    )
+                }
+            }
+
+            Box {
+                IconButton(onClick = { showMenu = true }) {
+                    Icon(Icons.Default.MoreVert, contentDescription = "More options")
+                }
+                DropdownMenu(
+                    expanded = showMenu,
+                    onDismissRequest = { showMenu = false }
+                ) {
+                    DropdownMenuItem(
+                        text = { Text(stringResource(R.string.rename_folder)) },
+                        leadingIcon = { Icon(Icons.Default.Edit, null) },
+                        onClick = {
+                            showMenu = false
+                            onRename()
+                        }
+                    )
+                    DropdownMenuItem(
+                        text = { Text(stringResource(R.string.delete), color = MaterialTheme.colorScheme.error) },
+                        leadingIcon = { Icon(Icons.Default.Delete, null, tint = MaterialTheme.colorScheme.error) },
+                        onClick = {
+                            showMenu = false
+                            onDelete()
+                        }
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun RenameFolderDialog(
+    course: Course,
+    onDismiss: () -> Unit,
+    onConfirm: (String) -> Unit
+) {
+    var name by remember { mutableStateOf(course.name) }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        shape = MaterialTheme.shapes.large,
+        title = { Text(stringResource(R.string.rename_folder_title), fontWeight = FontWeight.Bold) },
+        text = {
+            OutlinedTextField(
+                value = name,
+                onValueChange = { name = it },
+                label = { Text(stringResource(R.string.folder_name)) },
+                modifier = Modifier.fillMaxWidth(),
+                shape = MaterialTheme.shapes.small,
+                singleLine = true
+            )
+        },
+        confirmButton = {
+            Button(
+                onClick = { if (name.isNotBlank()) onConfirm(name) },
+                shape = MaterialTheme.shapes.small
+            ) {
+                Text(stringResource(R.string.save), fontWeight = FontWeight.Bold)
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text(stringResource(R.string.cancel))
+            }
+        }
+    )
 }
 
 @Composable

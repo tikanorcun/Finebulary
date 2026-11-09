@@ -252,6 +252,14 @@
     <string name="base_form_label">Base Form: %1$s</string>
     <string name="root_word_label">Root Word: %1$s</string>
 
+    <!-- Changelog v2.2 -->
+    <string name="changelog_v2_2_title">Version 2.2 - Folder Management &amp; Interactive Tour</string>
+    <string name="changelog_v2_2_item_1">Added duplicate word prevention to avoid adding the same term multiple times in a folder</string>
+    <string name="changelog_v2_2_item_2">Added folder view style toggle (switch instantly between Grid and List views)</string>
+    <string name="changelog_v2_2_item_3">Added folder renaming support for existing courses and personal folders</string>
+    <string name="changelog_v2_2_item_4">Added step-by-step setup guides inside API Keys screen for all AI providers</string>
+    <string name="changelog_v2_2_item_5">Added an interactive in-app feature walkthrough tour for first-time users</string>
+
     <!-- Changelog v2.1 -->
     <string name="changelog_v2_1_title">Version 2.1 - Pronunciation Support &amp; Polish</string>
     <string name="changelog_v2_1_item_1">Added normal and slow (turtle) pronunciation audio buttons directly in the word addition interface</string>
@@ -339,4 +347,6 @@
     <string name="no_history_yet">No History Yet</string>
     <string name="no_history_desc">Your generated IELTS passages will appear here.</string>
     <string name="sentence_translation">Sentence Translation</string>
+    <string name="rename_folder">Rename</string>
+    <string name="rename_folder_title">Rename Folder</string>
 </resources>

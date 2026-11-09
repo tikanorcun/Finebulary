@@ -10,6 +10,7 @@ private val Context.dataStore by preferencesDataStore(name = "user_settings")
 
 enum class ThemeMode { AUTO, LIGHT, NIGHT }
 enum class AppThemeColor { WARM, OCEAN, FOREST, NIGHT_PLUS, SYSTEM }
+enum class FolderViewStyle { GRID, LIST }
 
 class UserPreferences(private val context: Context) {
     private val THEME_MODE_KEY = stringPreferencesKey("theme_mode")
@@ -48,6 +49,8 @@ class UserPreferences(private val context: Context) {
     private val DAILY_NOTIFICATION_COUNT_KEY = intPreferencesKey("daily_notification_count")
     private val REMINDER_COURSE_IDS_KEY = stringSetPreferencesKey("reminder_course_ids")
     private val APP_LANGUAGE_KEY = stringPreferencesKey("app_language")
+    private val FOLDER_VIEW_STYLE_KEY = stringPreferencesKey("folder_view_style")
+    private val HAS_SEEN_APP_TUTORIAL_KEY = booleanPreferencesKey("has_seen_app_tutorial")
     
     private val SOUND_ENABLED_KEY = booleanPreferencesKey("sound_enabled")
     private val HAPTIC_ENABLED_KEY = booleanPreferencesKey("haptic_enabled")
@@ -99,6 +102,10 @@ class UserPreferences(private val context: Context) {
     val reminderCourseIds: Flow<Set<String>> = context.dataStore.data.map { it[REMINDER_COURSE_IDS_KEY] ?: emptySet() }
 
     val appLanguage: Flow<String> = context.dataStore.data.map { it[APP_LANGUAGE_KEY] ?: "en" }
+    val folderViewStyle: Flow<FolderViewStyle> = context.dataStore.data.map { p ->
+        try { FolderViewStyle.valueOf(p[FOLDER_VIEW_STYLE_KEY] ?: FolderViewStyle.GRID.name) } catch (e: Exception) { FolderViewStyle.GRID }
+    }
+    val hasSeenAppTutorial: Flow<Boolean> = context.dataStore.data.map { it[HAS_SEEN_APP_TUTORIAL_KEY] ?: false }
     val soundEnabled: Flow<Boolean> = context.dataStore.data.map { it[SOUND_ENABLED_KEY] ?: true }
     val hapticEnabled: Flow<Boolean> = context.dataStore.data.map { it[HAPTIC_ENABLED_KEY] ?: true }
     val exampleSentenceSource: Flow<String> = context.dataStore.data.map { it[EXAMPLE_SENTENCE_SOURCE_KEY] ?: "WIKTIONARY" }
@@ -163,5 +170,7 @@ class UserPreferences(private val context: Context) {
     suspend fun setReminderCourseIds(courseIds: Set<String>) {
         context.dataStore.edit { it[REMINDER_COURSE_IDS_KEY] = courseIds }
     }
+    suspend fun setFolderViewStyle(style: FolderViewStyle) { context.dataStore.edit { it[FOLDER_VIEW_STYLE_KEY] = style.name } }
+    suspend fun setHasSeenAppTutorial(seen: Boolean) { context.dataStore.edit { it[HAS_SEEN_APP_TUTORIAL_KEY] = seen } }
     suspend fun clearAll() { context.dataStore.edit { it.clear() } }
 }

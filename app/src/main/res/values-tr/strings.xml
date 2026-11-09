@@ -250,6 +250,14 @@
     <string name="base_form_label">Kelime Kökü: %1$s</string>
     <string name="root_word_label">Düzeltme: %1$s</string>
 
+    <!-- Changelog v2.2 -->
+    <string name="changelog_v2_2_title">Sürüm 2.2 - Klasör Yönetimi ve İnteraktif Tur</string>
+    <string name="changelog_v2_2_item_1">Aynı klasöre mükerrer kelime eklenmesini önleyen akıllı kopya koruması eklendi</string>
+    <string name="changelog_v2_2_item_2">Klasörler için görünüm stili değiştirme (Izgara ve Liste arasında anında geçiş) özelliği eklendi</string>
+    <string name="changelog_v2_2_item_3">Mevcut klasörler ve kurslar üzerinde yeniden adlandırma (isim değiştirme) desteği eklendi</string>
+    <string name="changelog_v2_2_item_4">Tüm yapay zeka sağlayıcıları için API Anahtarı alma rehberleri (adım adım anlatım) eklendi</string>
+    <string name="changelog_v2_2_item_5">İlk kurulumdan sonra uygulamayı tanıtan interaktif özellik turu (App Tutorial) eklendi</string>
+
     <!-- Changelog v2.1 -->
     <string name="changelog_v2_1_title">Sürüm 2.1 - Telaffuz Desteği ve İyileştirmeler</string>
     <string name="changelog_v2_1_item_1">Kelime ekleme arayüzüne anında normal ve yavaş (kaplumbağa) sesli telaffuz düğmeleri eklendi</string>
@@ -337,4 +345,6 @@
     <string name="no_history_yet">Geçmiş Bulunmuyor</string>
     <string name="no_history_desc">Oluşturduğunuz IELTS okuma metinleri burada görünecektir.</string>
     <string name="sentence_translation">Cümle Çevirisi</string>
+    <string name="rename_folder">Yeniden Adlandır</string>
+    <string name="rename_folder_title">Klasör Adını Değiştir</string>
 </resources>

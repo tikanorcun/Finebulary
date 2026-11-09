@@ -14,6 +14,7 @@ import com.language.finebulary.domain.usecase.DetectLanguageUseCase
 import com.language.finebulary.domain.usecase.GetRecommendedCourseUseCase
 import com.language.finebulary.data.pref.ThemeMode
 import com.language.finebulary.data.pref.UserPreferences
+import com.language.finebulary.data.pref.FolderViewStyle
 import com.language.finebulary.repository.CourseRepository
 import com.language.finebulary.util.BackupManager
 import com.language.finebulary.util.ImageSearchManager
@@ -173,6 +174,9 @@ class HomeViewModel @Inject constructor(
     val autoCloudBackup: StateFlow<Boolean> = userPreferences.autoCloudBackup.stateIn(viewModelScope, SharingStarted.Eagerly, initialValue = false)
     fun setAutoCloudBackup(enabled: Boolean) = viewModelScope.launch { userPreferences.setAutoCloudBackup(enabled) }
 
+    val folderViewStyle: StateFlow<FolderViewStyle> = userPreferences.folderViewStyle.stateIn(viewModelScope, SharingStarted.Eagerly, FolderViewStyle.GRID)
+    fun setFolderViewStyle(style: FolderViewStyle) = viewModelScope.launch { userPreferences.setFolderViewStyle(style) }
+
     private val _showChangelog = MutableStateFlow(value = false)
     val showChangelog: StateFlow<Boolean> = _showChangelog
     fun dismissChangelog() = viewModelScope.launch { 
@@ -183,6 +187,9 @@ class HomeViewModel @Inject constructor(
 
     val isOnboardingCompleted: StateFlow<Boolean> = userPreferences.isOnboardingCompleted.stateIn(viewModelScope, SharingStarted.Eagerly, initialValue = false)
     fun completeOnboarding() = viewModelScope.launch { userPreferences.setOnboardingCompleted(true) }
+
+    val hasSeenAppTutorial: StateFlow<Boolean> = userPreferences.hasSeenAppTutorial.stateIn(viewModelScope, SharingStarted.Eagerly, false)
+    fun setHasSeenAppTutorial(seen: Boolean) = viewModelScope.launch { userPreferences.setHasSeenAppTutorial(seen) }
 
     val remindersEnabled: StateFlow<Boolean> = userPreferences.remindersEnabled.stateIn(viewModelScope, SharingStarted.Eagerly, initialValue = true)
     val reminderHour: StateFlow<Int> = userPreferences.reminderHour.stateIn(viewModelScope, SharingStarted.Eagerly, initialValue = 9)
@@ -469,9 +476,10 @@ class HomeViewModel @Inject constructor(
     fun clearSelectedWord() { _selectedWordReviewState.value = null }
     fun deleteWord(word: Word) = viewModelScope.launch { repository.deleteWord(word); if (_selectedWordReviewState.value?.wordId == word.id) clearSelectedWord() }
     fun deleteWordsBatch(words: List<Word>) = viewModelScope.launch { repository.deleteWords(words) }
-    fun addManualWord(courseId: Long, front: String, back: String, definition: String? = null, synonyms: String? = null, antonyms: String? = null, example: String? = null, imageUrl: String? = null) = viewModelScope.launch {
-        repository.addSingleWord(courseId, front, back, definition, synonyms, antonyms, example, imageUrl)
+    fun addManualWord(courseId: Long, front: String, back: String, definition: String? = null, synonyms: String? = null, antonyms: String? = null, example: String? = null, imageUrl: String? = null, onResult: (Boolean) -> Unit = {}) = viewModelScope.launch {
+        val success = repository.addSingleWord(courseId, front, back, definition, synonyms, antonyms, example, imageUrl)
         clearTranslationState()
+        onResult(success)
     }
 
     fun clearTranslationState() {
@@ -480,6 +488,11 @@ class HomeViewModel @Inject constructor(
     }
 
     fun updateWord(word: Word) = viewModelScope.launch { updateWordStatusUseCase(word) }
+    fun renameCourse(course: Course, newName: String) = viewModelScope.launch {
+        if (newName.isNotBlank()) {
+            repository.updateCourse(course.copy(name = newName.trim()))
+        }
+    }
 
     private val _aiGenerationState = MutableStateFlow<AiGenerationState>(AiGenerationState.Idle)
     val aiGenerationState: StateFlow<AiGenerationState> = _aiGenerationState

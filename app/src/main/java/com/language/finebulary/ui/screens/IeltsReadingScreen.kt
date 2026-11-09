@@ -601,9 +601,14 @@ fun IeltsReadingScreen(
                                             antonyms = wordToAdd!!.antonyms,
                                             example = wordToAdd!!.example,
                                             imageUrl = wordToAdd!!.imageUrl
-                                        )
+                                        ) { success ->
+                                            if (!success) {
+                                                android.widget.Toast.makeText(context, "Bu kelime zaten bu klasörde mevcut!", android.widget.Toast.LENGTH_SHORT).show()
+                                            } else {
+                                                android.widget.Toast.makeText(context, "Word added to ${item.course.name}", android.widget.Toast.LENGTH_SHORT).show()
+                                            }
+                                        }
                                         wordToAdd = null
-                                        android.widget.Toast.makeText(context, "Word added to ${item.course.name}", android.widget.Toast.LENGTH_SHORT).show()
                                     }
                                 )
                             }

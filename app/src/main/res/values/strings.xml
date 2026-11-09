@@ -252,6 +252,11 @@
     <string name="base_form_label">Base Form: %1$s</string>
     <string name="root_word_label">Root Word: %1$s</string>
 
+    <!-- Changelog v2.2.1 -->
+    <string name="changelog_v2_2_1_title">Hotfix 2.2.1 - Startup Update Check &amp; Localization</string>
+    <string name="changelog_v2_2_1_item_1">Added automatic background update check on application startup</string>
+    <string name="changelog_v2_2_1_item_2">Completed full multi-language localization (English &amp; Turkish) for API key setup guides and UI elements</string>
+
     <!-- Changelog v2.2 -->
     <string name="changelog_v2_2_title">Version 2.2 - Folder Management &amp; Interactive Tour</string>
     <string name="changelog_v2_2_item_1">Added duplicate word prevention to avoid adding the same term multiple times in a folder</string>
@@ -349,4 +354,38 @@
     <string name="sentence_translation">Sentence Translation</string>
     <string name="rename_folder">Rename</string>
     <string name="rename_folder_title">Rename Folder</string>
+    <string name="tutorial_title_fmt">App Tour (%1$d/%2$d)</string>
+    <string name="tutorial_skip">Skip</string>
+    <string name="tutorial_next">Next</string>
+    <string name="tutorial_start">Start Exploring</string>
+    <string name="tutorial_step1_title">Folders &amp; AI Courses</string>
+    <string name="tutorial_step1_desc">Create your own vocabulary folders or generate custom word sets with AI in seconds.</string>
+    <string name="tutorial_step2_title">Spaced Repetition Review</string>
+    <string name="tutorial_step2_desc">Master words forever into your long-term memory with the scientific Spaced Repetition algorithm.</string>
+    <string name="tutorial_step3_title">Academy &amp; IELTS Reading</string>
+    <string name="tutorial_step3_desc">Read extensive academic articles, tap words for instant translation, and solve tests.</string>
+    <string name="tutorial_step4_title">Smart Reminders &amp; Audio</string>
+    <string name="tutorial_step4_desc">Perfect your language learning with daily notifications, pronunciation voices, and turtle (slow) mode.</string>
+    <string name="hide_guide">Hide Guide</string>
+    <string name="how_to_get_key">💡 How to Get Key?</string>
+    <string name="step_by_step_guide">Step-by-Step Guide:</string>
+    <string name="pexels_guide_1">Go to Pexels.com and create a free account.</string>
+    <string name="pexels_guide_2">Go to API > New API Key section.</string>
+    <string name="pexels_guide_3">Copy your generated key and paste it here.</string>
+    <string name="gemini_guide_1">Go to aistudio.google.com and sign in with your Google account.</string>
+    <string name="gemini_guide_2">Click the \'Get API Key\' button in the top left corner.</string>
+    <string name="gemini_guide_3">Generate and copy your free API key.</string>
+    <string name="groq_guide_1">Go to console.groq.com and create a free account.</string>
+    <string name="groq_guide_2">Go to API Keys and click \'Create API Key\'.</string>
+    <string name="groq_guide_3">Copy the generated key and paste it here.</string>
+    <string name="openai_guide_1">Go to platform.openai.com/api-keys.</string>
+    <string name="openai_guide_2">Click \'Create new secret key\' to generate your key.</string>
+    <string name="openai_guide_3">Note: OpenAI requires a prepaid balance in your account.</string>
+    <string name="deepseek_guide_1">Go to platform.deepseek.com and sign in.</string>
+    <string name="deepseek_guide_2">Create a new key from the API Keys section and copy it.</string>
+    <string name="openrouter_guide_1">Go to openrouter.ai/keys.</string>
+    <string name="openrouter_guide_2">Click \'Create Key\' to generate your shared key for all models.</string>
+    <string name="more_options">More options</string>
+    <string name="toggle_view">Toggle View</string>
+    <string name="word_count_format">%1$s words</string>
 </resources>

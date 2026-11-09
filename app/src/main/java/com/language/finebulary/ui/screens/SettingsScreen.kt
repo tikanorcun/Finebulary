@@ -50,7 +50,6 @@ fun SettingsScreen(
 
     val soundEnabled by viewModel.soundEnabled.collectAsState()
     val hapticEnabled by viewModel.hapticEnabled.collectAsState()
-    val exampleSentenceSource by viewModel.exampleSentenceSource.collectAsState()
     
     val remindersEnabled by viewModel.remindersEnabled.collectAsState()
     val startHour by viewModel.reminderStartHour.collectAsState()

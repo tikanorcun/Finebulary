@@ -88,7 +88,6 @@ class QuickAddOverlayActivity : ComponentActivity() {
                 LaunchedEffect(Unit) {
                     coroutineScope.launch(Dispatchers.IO) {
                         val folders = repo.allCoursesWithCount.first().filter { it.course.isPersonal }
-                        val nativeLangCode = prefs.appLanguage.first()
 
                         // 1. Detect language of shared text using ML Kit
                         val detectedLangCode = detectLanguage(sharedText) ?: "en"

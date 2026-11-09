@@ -1,6 +1,5 @@
 package com.language.finebulary.ui.screens
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -284,7 +283,7 @@ fun IeltsReadingScreen(
                     is IeltsReadingState.Success -> {
                         // LOCAL ANSWERS STATE
                         var currentAnswers by remember(s.passageId) { 
-                            mutableStateOf(s.userAnswers ?: emptyMap<Int, String>()) 
+                            mutableStateOf(s.userAnswers ?: emptyMap()) 
                         }
                         var isChecked by remember(s.passageId) { 
                             mutableStateOf(s.userAnswers != null) 
@@ -704,7 +703,7 @@ fun IeltsQuestionCard(
                             shape = MaterialTheme.shapes.small,
                             color = when {
                                 isResultVisible && isCorrect -> Color(0xFF4CAF50).copy(alpha = 0.2f)
-                                isResultVisible && isSelected && !isCorrect -> Color(0xFFF44336).copy(alpha = 0.2f)
+                                isResultVisible && isSelected -> Color(0xFFF44336).copy(alpha = 0.2f)
                                 isSelected -> MaterialTheme.colorScheme.primaryContainer
                                 else -> Color.Transparent
                             },

@@ -25,6 +25,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -80,6 +81,7 @@ class MainActivity : AppCompatActivity() {
             val engine = homeViewModel.deviceTtsEngine.value
             TtsManager.init(applicationContext, engine)
             SoundManager.init()
+            homeViewModel.checkForUpdates(applicationContext)
         }
         
         handleIntent(intent)
@@ -115,7 +117,7 @@ class MainActivity : AppCompatActivity() {
             val isDarkTheme = when (themeMode) {
                 ThemeMode.LIGHT -> false
                 ThemeMode.NIGHT -> true
-                ThemeMode.AUTO -> isSystemInDarkTheme() || themeColor == com.language.finebulary.data.pref.AppThemeColor.NIGHT_PLUS
+                ThemeMode.AUTO -> (isSystemInDarkTheme() || themeColor == com.language.finebulary.data.pref.AppThemeColor.NIGHT_PLUS)
             }
 
             LaunchedEffect(isDarkTheme) {
@@ -165,6 +167,40 @@ class MainActivity : AppCompatActivity() {
                         ChangelogDialog(onDismiss = { homeViewModel.dismissChangelog() })
                     } else if (isOnboardingCompleted && !hasSeenTutorial) {
                         AppTutorialDialog(onFinish = { homeViewModel.setHasSeenAppTutorial(true) })
+                    }
+
+                    val availableUpdate by homeViewModel.availableUpdate.collectAsState()
+                    if (availableUpdate != null) {
+                        val release = availableUpdate!!
+                        val context = LocalContext.current
+                        AlertDialog(
+                            onDismissRequest = { homeViewModel.clearAvailableUpdate() },
+                            title = { Text("Update Available: ${release.tagName}") },
+                            text = {
+                                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                                    Text(release.name ?: "A new version of Finebulary is available.")
+                                    if (!release.body.isNullOrEmpty()) {
+                                        Spacer(Modifier.height(4.dp))
+                                        Text(release.body, style = MaterialTheme.typography.bodySmall)
+                                    }
+                                }
+                            },
+                            confirmButton = {
+                                Button(
+                                    onClick = {
+                                        homeViewModel.downloadAndInstallUpdate(context, release)
+                                        homeViewModel.clearAvailableUpdate()
+                                    }
+                                ) {
+                                    Text("Download & Update")
+                                }
+                            },
+                            dismissButton = {
+                                TextButton(onClick = { homeViewModel.clearAvailableUpdate() }) {
+                                    Text("Later")
+                                }
+                            }
+                        )
                     }
 
                     LaunchedEffect(incomingText) {

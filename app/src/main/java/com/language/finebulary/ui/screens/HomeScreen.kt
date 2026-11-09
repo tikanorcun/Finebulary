@@ -7,11 +7,10 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items as listItems
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.grid.items as gridItems
 import com.language.finebulary.data.pref.FolderViewStyle
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -23,7 +22,6 @@ import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.animation.core.*
 import androidx.compose.ui.draw.scale
@@ -31,7 +29,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.language.finebulary.R
@@ -181,7 +178,7 @@ fun HomeScreen(
                     horizontalArrangement = Arrangement.spacedBy(16.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    items(courses) { item ->
+                    gridItems(items = courses) { item ->
                         CourseCard(
                             course = item.course,
                             wordCount = item.wordCount,
@@ -197,7 +194,7 @@ fun HomeScreen(
                     contentPadding = PaddingValues(16.dp),
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    items(courses) { item ->
+                    listItems(items = courses) { item ->
                         CourseListItem(
                             course = item.course,
                             wordCount = item.wordCount,
@@ -290,7 +287,7 @@ fun HomeScreen(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun AiGenerateDialog(
     nativeLanguage: Language,
@@ -351,7 +348,7 @@ fun AiGenerateDialog(
                         selectedTabIndex = selectedTab,
                         containerColor = Color.Transparent,
                         divider = {},
-                        indicator = { tabPositions ->
+                        indicator = { tabPositions: List<TabPosition> ->
                             TabRowDefaults.SecondaryIndicator(
                                 Modifier.tabIndicatorOffset(tabPositions[selectedTab]),
                                 color = MaterialTheme.colorScheme.primary
@@ -681,7 +678,7 @@ fun CourseCard(course: Course, wordCount: Int, onClick: () -> Unit, onDelete: ()
                             Text("📚", fontSize = 12.sp)
                             Spacer(Modifier.width(4.dp))
                             Text(
-                                text = "$wordCount",
+                                text = wordCount.toString(),
                                 style = MaterialTheme.typography.labelMedium,
                                 fontWeight = FontWeight.Bold,
                                 color = MaterialTheme.colorScheme.primary
@@ -858,7 +855,6 @@ fun RenameFolderDialog(
 
 @Composable
 fun QuickAddDialog(text: String, viewModel: HomeViewModel, onDismiss: () -> Unit) {
-    val context = LocalContext.current
     LaunchedEffect(text) {
         viewModel.autoTranslate(text, "tr", "en") // Basit bir başlangıç
     }

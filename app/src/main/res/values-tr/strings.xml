@@ -250,6 +250,11 @@
     <string name="base_form_label">Kelime Kökü: %1$s</string>
     <string name="root_word_label">Düzeltme: %1$s</string>
 
+    <!-- Changelog v2.2.1 -->
+    <string name="changelog_v2_2_1_title">Hotfix 2.2.1 - Başlangıç Güncelleme Kontrolü ve Çeviriler</string>
+    <string name="changelog_v2_2_1_item_1">Uygulama açılışında arka planda otomatik yeni sürüm kontrolü eklendi</string>
+    <string name="changelog_v2_2_1_item_2">API anahtarı rehberleri ve arayüz elemanları için tam çoklu dil (Türkçe ve İngilizce) desteği tamamlandı</string>
+
     <!-- Changelog v2.2 -->
     <string name="changelog_v2_2_title">Sürüm 2.2 - Klasör Yönetimi ve İnteraktif Tur</string>
     <string name="changelog_v2_2_item_1">Aynı klasöre mükerrer kelime eklenmesini önleyen akıllı kopya koruması eklendi</string>
@@ -347,4 +352,38 @@
     <string name="sentence_translation">Cümle Çevirisi</string>
     <string name="rename_folder">Yeniden Adlandır</string>
     <string name="rename_folder_title">Klasör Adını Değiştir</string>
+    <string name="tutorial_title_fmt">Uygulama Turu (%1$d/%2$d)</string>
+    <string name="tutorial_skip">Atla</string>
+    <string name="tutorial_next">İleri</string>
+    <string name="tutorial_start">Keşfetmeye Başla</string>
+    <string name="tutorial_step1_title">Klasörler &amp; AI Kurslar</string>
+    <string name="tutorial_step1_desc">Kendi kişisel kelime klasörlerinizi oluşturun veya yapay zeka ile saniyeler içinde özel kelime setleri üretin.</string>
+    <string name="tutorial_step2_title">Aralıklı Tekrar Çalışması</string>
+    <string name="tutorial_step2_desc">Bilimsel Spaced Repetition algoritması sayesinde kelimeleri unutmadan kalıcı hafızanıza kazıyın.</string>
+    <string name="tutorial_step3_title">Akademi &amp; IELTS Okuma Modu</string>
+    <string name="tutorial_step3_desc">Kapsamlı akademik makaleleri okuyun, metin içindeki kelimelere dokunarak anında çevirin ve test çözün.</string>
+    <string name="tutorial_step4_title">Akıllı Hatırlatıcılar &amp; Ses</string>
+    <string name="tutorial_step4_desc">Günlük bildirimler, telaffuz sesleri ve kaplumbağa (yavaş) modu ile dil öğreniminizi mükemmelleştirin.</string>
+    <string name="hide_guide">Rehberi Gizle</string>
+    <string name="how_to_get_key">💡 Nasıl Alınır?</string>
+    <string name="step_by_step_guide">Adım Adım Rehber:</string>
+    <string name="pexels_guide_1">Pexels.com web sitesine gidin ve ücretsiz hesap oluşturun.</string>
+    <string name="pexels_guide_2">API > New API Key bölümüne gidin.</string>
+    <string name="pexels_guide_3">Oluşturduğunuz anahtarı kopyalayıp buraya yapıştırın.</string>
+    <string name="gemini_guide_1">aistudio.google.com adresine gidin ve Google hesabınızla oturum açın.</string>
+    <string name="gemini_guide_2">Sol üst köşedeki \'Get API Key\' butonuna tıklayın.</string>
+    <string name="gemini_guide_3">Ücretsiz API anahtarınızı oluşturup kopyalayın.</string>
+    <string name="groq_guide_1">console.groq.com adresine gidin ve hesap açın.</string>
+    <string name="groq_guide_2">API Keys menüsünden \'Create API Key\' butonuna basın.</string>
+    <string name="groq_guide_3">Oluşan anahtarı kopyalayıp buraya yapıştırın.</string>
+    <string name="openai_guide_1">platform.openai.com/api-keys adresine gidin.</string>
+    <string name="openai_guide_2">\'Create new secret key\' butonuna tıklayarak anahtarınızı oluşturun.</string>
+    <string name="openai_guide_3">Not: OpenAI kullanımı için hesapta bakiye bulunmalıdır.</string>
+    <string name="deepseek_guide_1">platform.deepseek.com adresine gidin ve oturum açın.</string>
+    <string name="deepseek_guide_2">API Keys sekmesinden yeni bir anahtar oluşturun ve kopyalayın.</string>
+    <string name="openrouter_guide_1">openrouter.ai/keys adresine gidin.</string>
+    <string name="openrouter_guide_2">\'Create Key\' butonuna basarak tüm modeller için ortak anahtarınızı oluşturun.</string>
+    <string name="more_options">Diğer seçenekler</string>
+    <string name="toggle_view">Görünümü Değiştir</string>
+    <string name="word_count_format">%1$s kelime</string>
 </resources>

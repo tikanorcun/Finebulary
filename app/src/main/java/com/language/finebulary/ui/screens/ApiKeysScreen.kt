@@ -95,9 +95,9 @@ fun ApiKeysScreen(
                 onSave = { viewModel.setPexelsApiKey(it); Toast.makeText(context, keysSavedMsg, Toast.LENGTH_SHORT).show() },
                 getApiKeyUrl = "https://www.pexels.com/api/new/",
                 guideSteps = listOf(
-                    "Pexels.com web sitesine gidin ve ücretsiz hesap oluşturun.",
-                    "API > New API Key bölümüne gidin.",
-                    "Oluşturduğunuz anahtarı kopyalayıp buraya yapıştırın."
+                    stringResource(R.string.pexels_guide_1),
+                    stringResource(R.string.pexels_guide_2),
+                    stringResource(R.string.pexels_guide_3)
                 )
             )
 
@@ -406,9 +406,9 @@ fun ApiKeysScreen(
                             onSave = { viewModel.setGeminiApiKey(it); Toast.makeText(context, keysSavedMsg, Toast.LENGTH_SHORT).show() },
                             getApiKeyUrl = "https://aistudio.google.com/app/apikey",
                             guideSteps = listOf(
-                                "aistudio.google.com adresine gidin ve Google hesabınızla oturum açın.",
-                                "Sol üst köşedeki 'Get API Key' butonuna tıklayın.",
-                                "Ücretsiz API anahtarınızı oluşturup kopyalayın."
+                                stringResource(R.string.gemini_guide_1),
+                                stringResource(R.string.gemini_guide_2),
+                                stringResource(R.string.gemini_guide_3)
                             )
                         )
                     }
@@ -420,9 +420,9 @@ fun ApiKeysScreen(
                             onSave = { viewModel.setGroqApiKey(it); Toast.makeText(context, keysSavedMsg, Toast.LENGTH_SHORT).show() },
                             getApiKeyUrl = "https://console.groq.com/keys",
                             guideSteps = listOf(
-                                "console.groq.com adresine gidin ve hesap açın.",
-                                "API Keys menüsünden 'Create API Key' butonuna basın.",
-                                "Oluşan anahtarı kopyalayıp buraya yapıştırın."
+                                stringResource(R.string.groq_guide_1),
+                                stringResource(R.string.groq_guide_2),
+                                stringResource(R.string.groq_guide_3)
                             )
                         )
                     }
@@ -434,9 +434,9 @@ fun ApiKeysScreen(
                             onSave = { viewModel.setOpenAiApiKey(it); Toast.makeText(context, keysSavedMsg, Toast.LENGTH_SHORT).show() },
                             getApiKeyUrl = "https://platform.openai.com/api-keys",
                             guideSteps = listOf(
-                                "platform.openai.com/api-keys adresine gidin.",
-                                "'Create new secret key' butonuna tıklayarak anahtarınızı oluşturun.",
-                                "Not: OpenAI kullanımı için hesapta bakiye bulunmalıdır."
+                                stringResource(R.string.openai_guide_1),
+                                stringResource(R.string.openai_guide_2),
+                                stringResource(R.string.openai_guide_3)
                             )
                         )
                     }
@@ -448,8 +448,8 @@ fun ApiKeysScreen(
                             onSave = { viewModel.setDeepseekApiKey(it); Toast.makeText(context, keysSavedMsg, Toast.LENGTH_SHORT).show() },
                             getApiKeyUrl = "https://platform.deepseek.com/",
                             guideSteps = listOf(
-                                "platform.deepseek.com adresine gidin ve oturum açın.",
-                                "API Keys sekmesinden yeni bir anahtar oluşturun ve kopyalayın."
+                                stringResource(R.string.deepseek_guide_1),
+                                stringResource(R.string.deepseek_guide_2)
                             )
                         )
                     }
@@ -461,8 +461,8 @@ fun ApiKeysScreen(
                             onSave = { viewModel.setOpenrouterApiKey(it); Toast.makeText(context, keysSavedMsg, Toast.LENGTH_SHORT).show() },
                             getApiKeyUrl = "https://openrouter.ai/keys",
                             guideSteps = listOf(
-                                "openrouter.ai/keys adresine gidin.",
-                                "'Create Key' butonuna basarak tüm modeller için ortak anahtarınızı oluşturun."
+                                stringResource(R.string.openrouter_guide_1),
+                                stringResource(R.string.openrouter_guide_2)
                             )
                         )
                     }
@@ -571,7 +571,7 @@ fun ApiKeySection(
                 TextButton(onClick = { showGuide = !showGuide }) {
                     Icon(Icons.AutoMirrored.Filled.HelpOutline, null, modifier = Modifier.size(16.dp))
                     Spacer(Modifier.width(4.dp))
-                    Text(if (showGuide) "Rehberi Gizle" else "💡 Nasıl Alınır?", fontSize = 12.sp)
+                    Text(if (showGuide) stringResource(R.string.hide_guide) else stringResource(R.string.how_to_get_key), fontSize = 12.sp)
                 }
             }
         }
@@ -587,7 +587,7 @@ fun ApiKeySection(
                     modifier = Modifier.padding(12.dp),
                     verticalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
-                    Text("Adım Adım Rehber:", style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
+                    Text(stringResource(R.string.step_by_step_guide), style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
                     guideSteps.forEachIndexed { index, step ->
                         Text("${index + 1}. $step", style = MaterialTheme.typography.bodySmall)
                     }

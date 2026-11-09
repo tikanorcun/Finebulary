@@ -12,10 +12,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.language.finebulary.R
 
 data class TutorialStep(
     val title: String,
@@ -32,26 +34,26 @@ fun AppTutorialDialog(
 
     val steps = listOf(
         TutorialStep(
-            title = "Klasörler & AI Kurslar",
-            description = "Kendi kişisel kelime klasörlerinizi oluşturun veya yapay zeka ile saniyeler içinde özel kelime setleri üretin.",
+            title = stringResource(R.string.tutorial_step1_title),
+            description = stringResource(R.string.tutorial_step1_desc),
             icon = Icons.Default.FolderOpen,
             color = MaterialTheme.colorScheme.primary
         ),
         TutorialStep(
-            title = "Aralıklı Tekrar Çalışması",
-            description = "Bilimsel Spaced Repetition algoritması sayesinde kelimeleri unutmadan kalıcı hafızanıza kazıyın.",
+            title = stringResource(R.string.tutorial_step2_title),
+            description = stringResource(R.string.tutorial_step2_desc),
             icon = Icons.Default.Psychology,
             color = MaterialTheme.colorScheme.secondary
         ),
         TutorialStep(
-            title = "Akademi & IELTS Okuma Modu",
-            description = "Kapsamlı akademik makaleleri okuyun, metin içindeki kelimelere dokunarak anında çevirin ve test çözün.",
+            title = stringResource(R.string.tutorial_step3_title),
+            description = stringResource(R.string.tutorial_step3_desc),
             icon = Icons.AutoMirrored.Filled.MenuBook,
             color = MaterialTheme.colorScheme.tertiary
         ),
         TutorialStep(
-            title = "Akıllı Hatırlatıcılar & Ses",
-            description = "Günlük bildirimler, telaffuz sesleri ve kaplumbağa (yavaş) modu ile dil öğreniminizi mükemmelleştirin.",
+            title = stringResource(R.string.tutorial_step4_title),
+            description = stringResource(R.string.tutorial_step4_desc),
             icon = Icons.AutoMirrored.Filled.VolumeUp,
             color = Color(0xFF4CAF50)
         )
@@ -69,13 +71,13 @@ fun AppTutorialDialog(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Uygulama Turu (${currentStep + 1}/${steps.size})",
+                    text = stringResource(R.string.tutorial_title_fmt, currentStep + 1, steps.size),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary
                 )
                 TextButton(onClick = onFinish) {
-                    Text("Atla", style = MaterialTheme.typography.bodySmall)
+                    Text(stringResource(R.string.tutorial_skip), style = MaterialTheme.typography.bodySmall)
                 }
             }
         },
@@ -129,7 +131,7 @@ fun AppTutorialDialog(
                 shape = MaterialTheme.shapes.medium
             ) {
                 Text(
-                    text = if (currentStep < steps.size - 1) "İleri" else "Keşfetmeye Başla",
+                    text = if (currentStep < steps.size - 1) stringResource(R.string.tutorial_next) else stringResource(R.string.tutorial_start),
                     fontWeight = FontWeight.Bold
                 )
             }

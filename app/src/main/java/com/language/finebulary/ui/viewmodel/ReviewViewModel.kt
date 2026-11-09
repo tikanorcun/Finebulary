@@ -273,7 +273,7 @@ class ReviewViewModel @Inject constructor(
     }
 
     fun selectRightMeaning(meaning: String) {
-        val left = _selectedLeftWord.value ?: return
+        if (_selectedLeftWord.value == null) return
         _selectedRightMeaning.value = meaning
         checkMatch()
     }

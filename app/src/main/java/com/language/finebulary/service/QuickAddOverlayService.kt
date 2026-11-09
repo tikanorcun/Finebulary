@@ -8,7 +8,6 @@ import android.widget.Toast
 import android.os.IBinder
 import android.view.Gravity
 import android.view.WindowManager
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn

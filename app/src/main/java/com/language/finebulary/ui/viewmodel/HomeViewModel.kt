@@ -470,6 +470,7 @@ class HomeViewModel @Inject constructor(
     }
 
     fun getWordsForCourse(courseId: Long) = repository.getWordsForCourse(courseId)
+    suspend fun getAllWordsRaw() = repository.getAllWordsRaw()
     fun deleteCourse(course: Course) = viewModelScope.launch { repository.deleteCourse(course) }
     fun restartCourse(courseId: Long) = viewModelScope.launch { repository.restartCourse(courseId) }
     fun fetchReviewState(wordId: Long) = viewModelScope.launch { _selectedWordReviewState.value = repository.getReviewState(wordId) }
@@ -491,6 +492,17 @@ class HomeViewModel @Inject constructor(
     fun renameCourse(course: Course, newName: String) = viewModelScope.launch {
         if (newName.isNotBlank()) {
             repository.updateCourse(course.copy(name = newName.trim()))
+        }
+    }
+    fun importSharedCourse(json: String, onResult: (Boolean) -> Unit) {
+        viewModelScope.launch {
+            val data = BackupManager.parseBackupJson(json)
+            if (data != null && !data.courses.isNullOrEmpty() && !data.words.isNullOrEmpty()) {
+                repository.importFullData(data.courses, data.words, data.reviewStates ?: emptyList())
+                onResult(true)
+            } else {
+                onResult(false)
+            }
         }
     }
 

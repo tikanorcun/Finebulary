@@ -1,6 +1,8 @@
 package com.language.finebulary.ui.screens
 
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -113,11 +115,36 @@ fun HomeScreen(
         label = "pulse"
     )
 
+    val filePickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri ->
+        uri?.let {
+            try {
+                val inputStream = context.contentResolver.openInputStream(uri)
+                val json = inputStream?.bufferedReader().use { it?.readText() }
+                if (!json.isNullOrBlank()) {
+                    viewModel.importSharedCourse(json) { success ->
+                        if (success) {
+                            Toast.makeText(context, context.getString(R.string.course_imported_success), Toast.LENGTH_SHORT).show()
+                        } else {
+                            Toast.makeText(context, context.getString(R.string.course_imported_error), Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+            } catch (_: Exception) {
+                Toast.makeText(context, context.getString(R.string.course_imported_error), Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text(title, fontWeight = FontWeight.Bold) },
                 actions = {
+                    IconButton(onClick = { filePickerLauncher.launch("application/json") }) {
+                        Icon(Icons.Default.FileOpen, contentDescription = stringResource(R.string.import_course))
+                    }
                     IconButton(onClick = {
                         viewModel.setFolderViewStyle(
                             if (folderViewStyle == FolderViewStyle.GRID) FolderViewStyle.LIST else FolderViewStyle.GRID
@@ -125,7 +152,7 @@ fun HomeScreen(
                     }) {
                         Icon(
                             imageVector = if (folderViewStyle == FolderViewStyle.GRID) Icons.AutoMirrored.Filled.ViewList else Icons.Default.GridView,
-                            contentDescription = "Toggle View"
+                            contentDescription = stringResource(R.string.toggle_view)
                         )
                     }
                 },

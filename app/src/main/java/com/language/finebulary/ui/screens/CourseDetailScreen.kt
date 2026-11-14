@@ -20,6 +20,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import android.content.Intent
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -45,10 +47,12 @@ fun CourseDetailsScreen(
     course: Course,
     viewModel: HomeViewModel,
     onReviewClick: (String, String) -> Unit,
+    onStartDuel: () -> Unit,
     onAddClick: (() -> Unit)? = null,
     onBack: () -> Unit
 ) {
     val words by viewModel.getWordsForCourse(course.id).collectAsState(initial = emptyList())
+    val context = LocalContext.current
     var selectedWordForDetails by remember { mutableStateOf<Word?>(null) }
     var wordToEdit by remember { mutableStateOf<Word?>(null) }
     var showReviewConfig by remember { mutableStateOf(false) }
@@ -175,6 +179,36 @@ fun CourseDetailsScreen(
                                 expanded = showMoreMenu,
                                 onDismissRequest = { showMoreMenu = false }
                             ) {
+                                DropdownMenuItem(
+                                    text = { Text(stringResource(R.string.share_course)) },
+                                    leadingIcon = { Icon(Icons.Default.Share, null) },
+                                    onClick = {
+                                        showMoreMenu = false
+                                        val json = com.language.finebulary.util.BackupManager.createBackupJson(
+                                            courses = listOf(course),
+                                            words = words
+                                        )
+                                        val file = java.io.File(context.cacheDir, "${course.name.replace(" ", "_")}_course.finebulary")
+                                        file.writeText(json)
+                                        val uri = androidx.core.content.FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", file)
+                                        val intent = Intent(Intent.ACTION_SEND).apply {
+                                            type = "application/json"
+                                            putExtra(Intent.EXTRA_STREAM, uri)
+                                            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                                        }
+                                        context.startActivity(Intent.createChooser(intent, "Kursu Paylaş"))
+                                    }
+                                )
+                                HorizontalDivider()
+                                DropdownMenuItem(
+                                    text = { Text(stringResource(R.string.start_duel)) },
+                                    leadingIcon = { Icon(Icons.Default.SportsEsports, null) },
+                                    onClick = {
+                                        showMoreMenu = false
+                                        onStartDuel()
+                                    }
+                                )
+                                HorizontalDivider()
                                 DropdownMenuItem(
                                     text = { Text(stringResource(R.string.restart_progress)) },
                                     leadingIcon = { Icon(Icons.Default.Refresh, null) },

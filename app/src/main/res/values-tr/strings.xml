@@ -250,6 +250,15 @@
     <string name="base_form_label">Kelime Kökü: %1$s</string>
     <string name="root_word_label">Düzeltme: %1$s</string>
 
+    <!-- Changelog v2.3 -->
+    <string name="changelog_v2_3_title">Sürüm 2.3 - Kurs Paylaşımı ve Kelime Düelloları</string>
+    <string name="changelog_v2_3_item_1">Arkadaşlar arası P2P Kurs / Klasör Paylaşımı (.finebulary dışa ve içe aktarma)</string>
+    <string name="changelog_v2_3_item_2">Skor paylaşımı ve meydan okuma özellikli Hızlı Kelime Düellosu Modu</string>
+    <string name="changelog_v2_3_item_3">Uygulamayı açmadan bildirim panelinden işlem yapmanızı sağlayan interaktif bildirim butonları ("Artık Hatırlıyorum" / "Tekrar Et")</string>
+    <string name="changelog_v2_3_item_4">Uygulama açılışında arka planda otomatik yeni sürüm kontrolü</string>
+    <string name="changelog_v2_3_item_5">İlk kurulumdan sonra kullanıcıları tanıtan interaktif özellik turu ve telaffuz ses düğmeleri</string>
+    <string name="changelog_v2_3_item_6">Tam çoklu dil desteği ve adım adım yapay zeka rehberleri</string>
+
     <!-- Changelog v2.2.1 -->
     <string name="changelog_v2_2_1_title">Hotfix 2.2.1 - Başlangıç Güncelleme Kontrolü ve Çeviriler</string>
     <string name="changelog_v2_2_1_item_1">Uygulama açılışında arka planda otomatik yeni sürüm kontrolü eklendi</string>
@@ -386,4 +395,13 @@
     <string name="more_options">Diğer seçenekler</string>
     <string name="toggle_view">Görünümü Değiştir</string>
     <string name="word_count_format">%1$s kelime</string>
+    <string name="notification_action_master">🧠 Artık Hatırlıyorum</string>
+    <string name="notification_action_remind">🔄 Tekrar Et</string>
+    <string name="start_duel">Kelime Düellosu Başlat</string>
+    <string name="duel_title">⚔️ Kelime Düellosu</string>
+    <string name="challenge_score_msg">⚔️ Finebulary Kelime Düellosunda \'%2$s\' klasöründe %1$d doğru yaptım! Sen bu skoru geçebilir misin? 🚀</string>
+    <string name="share_course">Klasörü / Kursu Paylaş</string>
+    <string name="import_course">Dosyadan Kurs İçe Aktar</string>
+    <string name="course_imported_success">Kurs başarıyla içe aktarıldı!</string>
+    <string name="course_imported_error">Kurs dosyası içe aktarılamadı.</string>
 </resources>

@@ -341,7 +341,17 @@ class MainActivity : AppCompatActivity() {
                                         onReviewClick = { mode, methods -> 
                                             navController.navigate("review/${course.id}/$mode/$methods") 
                                         },
+                                        onStartDuel = { navController.navigate("duel") },
                                         onAddClick = { showAddWordDialog = true },
+                                        onBack = { navController.popBackStack() }
+                                    )
+                                }
+                            }
+                            composable("duel") {
+                                selectedCourse?.let { course ->
+                                    DuelScreen(
+                                        course = course,
+                                        viewModel = homeViewModel,
                                         onBack = { navController.popBackStack() }
                                     )
                                 }

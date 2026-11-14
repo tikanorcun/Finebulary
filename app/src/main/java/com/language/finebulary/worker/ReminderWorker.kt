@@ -91,6 +91,30 @@ class ReminderWorker @AssistedInject constructor(
 
         val pendingIntent = PendingIntent.getActivity(applicationContext, word.id.toInt(), intent, pendingIntentFlag)
 
+        val masterIntent = Intent(applicationContext, com.language.finebulary.service.NotificationActionReceiver::class.java).apply {
+            action = "ACTION_MASTER_WORD"
+            putExtra("EXTRA_WORD_ID", word.id)
+            putExtra("EXTRA_COURSE_ID", word.courseId)
+        }
+        val masterPendingIntent = PendingIntent.getBroadcast(
+            applicationContext,
+            (word.id * 2).toInt(),
+            masterIntent,
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE else PendingIntent.FLAG_UPDATE_CURRENT
+        )
+
+        val remindIntent = Intent(applicationContext, com.language.finebulary.service.NotificationActionReceiver::class.java).apply {
+            action = "ACTION_KEEP_REMINDING"
+            putExtra("EXTRA_WORD_ID", word.id)
+            putExtra("EXTRA_COURSE_ID", word.courseId)
+        }
+        val remindPendingIntent = PendingIntent.getBroadcast(
+            applicationContext,
+            (word.id * 2 + 1).toInt(),
+            remindIntent,
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE else PendingIntent.FLAG_UPDATE_CURRENT
+        )
+
         val meaning = word.backsPacked.split("|").first().trim()
         val contentText = buildString {
             append("Anlamı: $meaning")
@@ -107,6 +131,8 @@ class ReminderWorker @AssistedInject constructor(
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setAutoCancel(true)
             .setContentIntent(pendingIntent)
+            .addAction(0, applicationContext.getString(R.string.notification_action_master), masterPendingIntent)
+            .addAction(0, applicationContext.getString(R.string.notification_action_remind), remindPendingIntent)
             .build()
 
         notificationManager.notify(word.id.toInt(), notification)

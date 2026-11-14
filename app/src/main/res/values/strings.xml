@@ -252,6 +252,15 @@
     <string name="base_form_label">Base Form: %1$s</string>
     <string name="root_word_label">Root Word: %1$s</string>
 
+    <!-- Changelog v2.3 -->
+    <string name="changelog_v2_3_title">Version 2.3 - P2P Course Sharing &amp; Word Duels</string>
+    <string name="changelog_v2_3_item_1">Peer-to-Peer Course/Folder Sharing (.finebulary export &amp; import)</string>
+    <string name="changelog_v2_3_item_2">Rapid-Fire Vocabulary Duel Mode with challenge score sharing</string>
+    <string name="changelog_v2_3_item_3">Interactive Actionable Push Notifications with Quick Action buttons ("I Remember" / "Keep Practicing")</string>
+    <string name="changelog_v2_3_item_4">Automatic background update checks on app startup</string>
+    <string name="changelog_v2_3_item_5">Interactive in-app feature walkthrough tour &amp; audio pronunciation preview</string>
+    <string name="changelog_v2_3_item_6">Complete multi-language localization &amp; AI setup guides</string>
+
     <!-- Changelog v2.2.1 -->
     <string name="changelog_v2_2_1_title">Hotfix 2.2.1 - Startup Update Check &amp; Localization</string>
     <string name="changelog_v2_2_1_item_1">Added automatic background update check on application startup</string>
@@ -388,4 +397,13 @@
     <string name="more_options">More options</string>
     <string name="toggle_view">Toggle View</string>
     <string name="word_count_format">%1$s words</string>
+    <string name="notification_action_master">🧠 I Remember</string>
+    <string name="notification_action_remind">🔄 Keep Practicing</string>
+    <string name="start_duel">Start Word Duel</string>
+    <string name="duel_title">⚔️ Word Duel</string>
+    <string name="challenge_score_msg">⚔️ I scored %1$d points in \'%2$s\' on Finebulary Vocabulary Duel! Can you beat my score? 🚀</string>
+    <string name="share_course">Share Course / Folder</string>
+    <string name="import_course">Import Course File</string>
+    <string name="course_imported_success">Course imported successfully!</string>
+    <string name="course_imported_error">Failed to import course file.</string>
 </resources>

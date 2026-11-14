@@ -667,7 +667,7 @@ fun IeltsReadingScreen(
                                             imageUrl = wordToAdd!!.imageUrl
                                         ) { success ->
                                             if (!success) {
-                                                android.widget.Toast.makeText(context, "Bu kelime zaten bu klasörde mevcut!", android.widget.Toast.LENGTH_SHORT).show()
+                                                android.widget.Toast.makeText(context, context.getString(R.string.word_already_exists), android.widget.Toast.LENGTH_SHORT).show()
                                             } else {
                                                 android.widget.Toast.makeText(context, "Word added to ${item.course.name}", android.widget.Toast.LENGTH_SHORT).show()
                                             }

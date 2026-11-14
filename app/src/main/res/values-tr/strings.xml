@@ -459,4 +459,12 @@
     <string name="image_selection_title">Görsel Seçimi (Seçmek için görsele dokunun):</string>
     <string name="word_of_the_day_title">✨ Günün Kelimesi</string>
     <string name="streak_days_fmt">🔥 %1$d Gün</string>
+    <string name="duel_min_words_warning">Düello başlatmak için bu klasörde en az 4 kelime olmalıdır.</string>
+    <string name="duel_over_title">🏆 Düello Sona Erdi!</string>
+    <string name="correct_count_label">Doğru Sayısı</string>
+    <string name="challenge_friend_button">Arkadaşına Meydan Oku (Skoru Paylaş)</string>
+    <string name="play_again">Tekrar Oyna</string>
+    <string name="challenge_share_title">Meydan Oku</string>
+    <string name="word_already_exists">Bu kelime zaten bu klasörde mevcut!</string>
+    <string name="close">Kapat</string>
 </resources>

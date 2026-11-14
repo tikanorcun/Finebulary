@@ -229,9 +229,9 @@ class QuickAddOverlayActivity : ComponentActivity() {
                                         val success = repo.addSingleWord(selectedCourse!!.id, front, back, definition, synonyms, antonyms, example, imageUrl)
                                         withContext(Dispatchers.Main) {
                                             if (!success) {
-                                                Toast.makeText(context, "Bu kelime zaten bu klasörde mevcut!", Toast.LENGTH_SHORT).show()
+                                                Toast.makeText(context, context.getString(R.string.word_already_exists), Toast.LENGTH_SHORT).show()
                                             } else {
-                                                Toast.makeText(context, "Kelime eklendi", Toast.LENGTH_SHORT).show()
+                                                Toast.makeText(context, context.getString(R.string.quick_add_title), Toast.LENGTH_SHORT).show()
                                                 finish()
                                             }
                                         }

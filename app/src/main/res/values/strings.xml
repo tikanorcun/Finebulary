@@ -461,4 +461,12 @@
     <string name="image_selection_title">Image Association (Tap to select):</string>
     <string name="word_of_the_day_title">✨ Word of the Day</string>
     <string name="streak_days_fmt">🔥 %1$d Days</string>
+    <string name="duel_min_words_warning">You need at least 4 words in this folder to start a duel.</string>
+    <string name="duel_over_title">🏆 Duel Finished!</string>
+    <string name="correct_count_label">Correct Answers</string>
+    <string name="challenge_friend_button">Challenge a Friend (Share Score)</string>
+    <string name="play_again">Play Again</string>
+    <string name="challenge_share_title">Challenge Friend</string>
+    <string name="word_already_exists">This word already exists in this folder!</string>
+    <string name="close">Close</string>
 </resources>

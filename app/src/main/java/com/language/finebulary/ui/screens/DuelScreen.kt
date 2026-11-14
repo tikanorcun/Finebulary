@@ -101,11 +101,11 @@ fun DuelScreen(
                 ) {
                     Icon(Icons.Default.Warning, null, modifier = Modifier.size(64.dp), tint = MaterialTheme.colorScheme.error)
                     Text(
-                        text = "Düello başlatmak için bu klasörde en az 4 kelime olmalıdır.",
+                        text = stringResource(R.string.duel_min_words_warning),
                         style = MaterialTheme.typography.bodyLarge,
                         textAlign = TextAlign.Center
                     )
-                    Button(onClick = onBack) { Text("Geri Dön") }
+                    Button(onClick = onBack) { Text(stringResource(R.string.go_back)) }
                 }
             } else if (isGameOver) {
                 Column(
@@ -113,7 +113,7 @@ fun DuelScreen(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(20.dp)
                 ) {
-                    Text(text = "🏆 Düello Sona Erdi!", style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.ExtraBold)
+                    Text(text = stringResource(R.string.duel_over_title), style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.ExtraBold)
 
                     Surface(
                         modifier = Modifier.fillMaxWidth(),
@@ -125,26 +125,22 @@ fun DuelScreen(
                             horizontalAlignment = Alignment.CenterHorizontally,
                             verticalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
-                            Text(text = "Doğru Sayısı", style = MaterialTheme.typography.labelLarge)
+                            Text(text = stringResource(R.string.correct_count_label), style = MaterialTheme.typography.labelLarge)
                             Text(text = "$score", style = MaterialTheme.typography.displayLarge, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
-                            Text(text = "Klasör: ${course.name}", style = MaterialTheme.typography.bodyMedium)
+                            Text(text = "Folder: ${course.name}", style = MaterialTheme.typography.bodyMedium)
                         }
                     }
 
                     Button(
                         onClick = {
-                            val timeUsed = 60 - timeLeft
-                            val challengeText = "⚔️ Finebulary Kelime Düellosu Meydan Okuması!\n\n" +
-                                "🏆 Skorum: $score Doğru Cevap ($timeUsed saniye)\n" +
-                                "📁 Klasör: ${course.name}\n\n" +
-                                "Benim bu rekorumu geçebilir misin? Finebulary uygulamasını aç ve yarışa katıl! 🚀"
+                            val challengeText = context.getString(R.string.challenge_score_msg, score, course.name)
                             
                             val sendIntent = Intent().apply {
                                 action = Intent.ACTION_SEND
                                 putExtra(Intent.EXTRA_TEXT, challengeText)
                                 type = "text/plain"
                             }
-                            val shareIntent = Intent.createChooser(sendIntent, "Meydan Oku")
+                            val shareIntent = Intent.createChooser(sendIntent, context.getString(R.string.challenge_share_title))
                             context.startActivity(shareIntent)
                         },
                         modifier = Modifier.fillMaxWidth(),
@@ -152,7 +148,7 @@ fun DuelScreen(
                     ) {
                         Icon(Icons.Default.Share, null)
                         Spacer(Modifier.width(8.dp))
-                        Text("Arkadaşına Meydan Oku (Skoru Paylaş)", fontWeight = FontWeight.Bold)
+                        Text(stringResource(R.string.challenge_friend_button), fontWeight = FontWeight.Bold)
                     }
 
                     OutlinedButton(
@@ -169,7 +165,7 @@ fun DuelScreen(
                         modifier = Modifier.fillMaxWidth(),
                         shape = MaterialTheme.shapes.medium
                     ) {
-                        Text("Tekrar Oyna")
+                        Text(stringResource(R.string.play_again))
                     }
                 }
             } else if (currentQuestion != null) {

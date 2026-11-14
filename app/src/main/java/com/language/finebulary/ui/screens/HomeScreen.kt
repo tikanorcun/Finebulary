@@ -815,12 +815,12 @@ fun CourseListItem(course: Course, wordCount: Int, onClick: () -> Unit, onDelete
                 )
                 Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
                     Text(
-                        text = "📚 $wordCount kelime",
+                        text = "📚 " + stringResource(R.string.word_count_format, wordCount),
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.primary
                     )
                     Text(
-                        text = "🔥 ${course.currentStreak} gün",
+                        text = stringResource(R.string.streak_days_fmt, course.currentStreak),
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.secondary
                     )

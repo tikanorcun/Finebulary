@@ -445,9 +445,9 @@ class MainActivity : AppCompatActivity() {
                                 onConfirm = { front, back, definition, synonyms, antonyms, example, imageUrl ->
                                     homeViewModel.addManualWord(folderToUse.id, front, back, definition, synonyms, antonyms, example, imageUrl) { success ->
                                         if (!success) {
-                                            Toast.makeText(this@MainActivity, "Bu kelime zaten bu klasörde mevcut!", Toast.LENGTH_SHORT).show()
+                                            Toast.makeText(this@MainActivity, getString(R.string.word_already_exists), Toast.LENGTH_SHORT).show()
                                         } else {
-                                            Toast.makeText(this@MainActivity, "Kelime eklendi", Toast.LENGTH_SHORT).show()
+                                            Toast.makeText(this@MainActivity, getString(R.string.quick_add_title), Toast.LENGTH_SHORT).show()
                                         }
                                     }
                                     showAddWordDialog = false

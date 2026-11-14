@@ -11,7 +11,7 @@
         android:id="@+id/widget_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="✨ Günün Kelimesi"
+        android:text="@string/word_of_the_day_title"
         android:textSize="12sp"
         android:textStyle="bold"
         android:textColor="#6200EE" />

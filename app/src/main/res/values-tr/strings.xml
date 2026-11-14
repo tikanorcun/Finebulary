@@ -427,4 +427,27 @@
     <string name="translation_google">Google Translate (Hızlı ve Ücretsiz)</string>
     <string name="translation_mymemory">MyMemory API (Alternatif Servis)</string>
     <string name="translation_ai">Yapay Zeka Destekli Çeviri</string>
+    <string name="srs_max_daily_cap_title">Günlük Tekrar Limiti</string>
+    <string name="srs_prioritize_weak_words">Zayıf Kelimelere Öncelik Ver</string>
+    <string name="badges_title">🏆 Başarılarım ve Rozetler</string>
+    <string name="badge_streak_title">Seri Avcısı</string>
+    <string name="badge_streak_desc">Mevcut Serin: %1$d Gün</string>
+    <string name="badge_vocab_title">Kelime Ustası</string>
+    <string name="badge_vocab_desc">10+ Kelime Tamamla</string>
+    <string name="badge_duel_title">Düello Şampiyonu</string>
+    <string name="badge_duel_desc">Düello Modunda Yarış</string>
+    <string name="badge_ielts_title">IELTS Okuyucusu</string>
+    <string name="badge_ielts_desc">Akademi Modunda Okuma Yap</string>
+    <string name="ai_micro_story_title">📖 Yapay Zeka Kelime Hikayesi</string>
+    <string name="ai_micro_story_generating">Kelime hikayeniz hazırlanıyor...</string>
+    <string name="ai_micro_story_button">AI Hikaye Üret</string>
+    <string name="shadowing_practice_title">🎙️ Telaffuz &amp; Shadowing Pratiği</string>
+    <string name="listen_original">Dinle</string>
+    <string name="speak_button">Söyle</string>
+    <string name="listening_label">Dinliyor...</string>
+    <string name="you_said">Söylediğin: \"%1$s\"</string>
+    <string name="accuracy_score">Doğruluk Skoru: %1$d%%</string>
+    <string name="image_selection_title">Görsel Seçimi (Seçmek için görsele dokunun):</string>
+    <string name="word_of_the_day_title">✨ Günün Kelimesi</string>
+    <string name="streak_days_fmt">🔥 %1$d Gün</string>
 </resources>

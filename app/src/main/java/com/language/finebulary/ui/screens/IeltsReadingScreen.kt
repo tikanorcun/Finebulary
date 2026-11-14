@@ -734,7 +734,7 @@ fun SentenceShadowingDialog(
             speechManager.stopListening()
             onDismiss()
         },
-        title = { Text("🎙️ Telaffuz & Shadowing Pratiği", fontWeight = FontWeight.Bold) },
+        title = { Text(stringResource(R.string.shadowing_practice_title), fontWeight = FontWeight.Bold) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
                 Text(
@@ -754,7 +754,7 @@ fun SentenceShadowingDialog(
                     ) {
                         Icon(Icons.AutoMirrored.Filled.VolumeUp, null)
                         Spacer(Modifier.width(4.dp))
-                        Text("Dinle")
+                        Text(stringResource(R.string.listen_original))
                     }
 
                     Button(
@@ -768,7 +768,7 @@ fun SentenceShadowingDialog(
                     ) {
                         Icon(if (isListening) Icons.Default.MicOff else Icons.Default.Mic, null)
                         Spacer(Modifier.width(4.dp))
-                        Text(if (isListening) "Dinliyor..." else "Söyle")
+                        Text(if (isListening) stringResource(R.string.listening_label) else stringResource(R.string.speak_button))
                     }
                 }
 
@@ -779,13 +779,13 @@ fun SentenceShadowingDialog(
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Column(modifier = Modifier.padding(12.dp)) {
-                            Text("Söylediğin: \"$spokenText\"", style = MaterialTheme.typography.bodyMedium)
+                            Text(stringResource(R.string.you_said, spokenText), style = MaterialTheme.typography.bodyMedium)
                             Spacer(Modifier.height(4.dp))
                             Text(
-                                text = "Doğruluk Skoru: %$matchPercentage " + when {
-                                    matchPercentage >= 80 -> "🏆 Harika!"
-                                    matchPercentage >= 50 -> "👍 Çok İyi!"
-                                    else -> "🔄 Tekrar Dene!"
+                                text = stringResource(R.string.accuracy_score, matchPercentage) + " " + when {
+                                    matchPercentage >= 80 -> "🏆"
+                                    matchPercentage >= 50 -> "👍"
+                                    else -> "🔄"
                                 },
                                 fontWeight = FontWeight.Bold,
                                 color = if (matchPercentage >= 70) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error

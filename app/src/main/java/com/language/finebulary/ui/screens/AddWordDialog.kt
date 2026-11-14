@@ -185,7 +185,7 @@ fun AddWordDialog(
                     }
                 } else if (imageOptions.size > 1) {
                     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                        Text("Görsel Seçimi (Seçmek için görsele dokunun):", style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold)
+                        Text(stringResource(R.string.image_selection_title), style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold)
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.spacedBy(6.dp)

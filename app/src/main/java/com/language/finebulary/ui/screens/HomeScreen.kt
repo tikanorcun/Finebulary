@@ -146,7 +146,7 @@ fun HomeScreen(
                 actions = {
                     AssistChip(
                         onClick = { showBadgesDialog = true },
-                        label = { Text("🔥 $currentStreak Gün", fontWeight = FontWeight.Bold) },
+                        label = { Text(stringResource(R.string.streak_days_fmt, currentStreak), fontWeight = FontWeight.Bold) },
                         leadingIcon = { Icon(Icons.Default.EmojiEvents, contentDescription = "Badges", tint = MaterialTheme.colorScheme.primary) },
                         modifier = Modifier.padding(end = 4.dp)
                     )
@@ -937,7 +937,7 @@ fun BadgesDialog(currentStreak: Int, onDismiss: () -> Unit) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(Icons.Default.EmojiEvents, null, tint = MaterialTheme.colorScheme.primary)
                 Spacer(Modifier.width(8.dp))
-                Text("🏆 Başarılarım ve Rozetler", fontWeight = FontWeight.Bold)
+                Text(stringResource(R.string.badges_title), fontWeight = FontWeight.Bold)
             }
         },
         text = {
@@ -947,33 +947,33 @@ fun BadgesDialog(currentStreak: Int, onDismiss: () -> Unit) {
             ) {
                 BadgeItem(
                     icon = "🔥",
-                    title = "Seri Avcısı",
-                    description = "Mevcut Serin: $currentStreak Gün",
+                    title = stringResource(R.string.badge_streak_title),
+                    description = stringResource(R.string.badge_streak_desc, currentStreak),
                     isUnlocked = currentStreak >= 1
                 )
                 BadgeItem(
                     icon = "⭐",
-                    title = "Kelime Ustası",
-                    description = "10+ Kelime Tamamla",
+                    title = stringResource(R.string.badge_vocab_title),
+                    description = stringResource(R.string.badge_vocab_desc),
                     isUnlocked = true
                 )
                 BadgeItem(
                     icon = "⚔️",
-                    title = "Düello Şampiyonu",
-                    description = "Düello Modunda Yarış",
+                    title = stringResource(R.string.badge_duel_title),
+                    description = stringResource(R.string.badge_duel_desc),
                     isUnlocked = true
                 )
                 BadgeItem(
                     icon = "🎓",
-                    title = "IELTS Okuyucusu",
-                    description = "Akademi Modunda Okuma Yap",
+                    title = stringResource(R.string.badge_ielts_title),
+                    description = stringResource(R.string.badge_ielts_desc),
                     isUnlocked = true
                 )
             }
         },
         confirmButton = {
             TextButton(onClick = onDismiss) {
-                Text("Harika!")
+                Text(stringResource(android.R.string.ok))
             }
         }
     )

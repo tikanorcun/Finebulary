@@ -429,4 +429,27 @@
     <string name="translation_google">Google Translate (Fast &amp; Free)</string>
     <string name="translation_mymemory">MyMemory API (Alternative)</string>
     <string name="translation_ai">AI-Powered Translation</string>
+    <string name="srs_max_daily_cap_title">Daily Review Cap</string>
+    <string name="srs_prioritize_weak_words">Prioritize Weak Words</string>
+    <string name="badges_title">🏆 Achievements &amp; Badges</string>
+    <string name="badge_streak_title">Streak Hunter</string>
+    <string name="badge_streak_desc">Current streak: %1$d days</string>
+    <string name="badge_vocab_title">Vocabulary Hero</string>
+    <string name="badge_vocab_desc">Complete 10+ Words</string>
+    <string name="badge_duel_title">Duel Champion</string>
+    <string name="badge_duel_desc">Compete in Word Duel</string>
+    <string name="badge_ielts_title">IELTS Scholar</string>
+    <string name="badge_ielts_desc">Practice in Academy Mode</string>
+    <string name="ai_micro_story_title">📖 AI Micro-Story</string>
+    <string name="ai_micro_story_generating">Preparing your micro-story...</string>
+    <string name="ai_micro_story_button">AI Story</string>
+    <string name="shadowing_practice_title">🎙️ Pronunciation &amp; Shadowing Practice</string>
+    <string name="listen_original">Listen</string>
+    <string name="speak_button">Speak</string>
+    <string name="listening_label">Listening...</string>
+    <string name="you_said">You said: \"%1$s\"</string>
+    <string name="accuracy_score">Accuracy Score: %1$d%%</string>
+    <string name="image_selection_title">Image Association (Tap to select):</string>
+    <string name="word_of_the_day_title">✨ Word of the Day</string>
+    <string name="streak_days_fmt">🔥 %1$d Days</string>
 </resources>

@@ -128,7 +128,7 @@ fun CourseDetailsScreen(
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(Icons.Default.AutoAwesome, null, tint = MaterialTheme.colorScheme.primary)
                     Spacer(Modifier.width(8.dp))
-                    Text("📖 Yapay Zeka Kelime Hikayesi", fontWeight = FontWeight.Bold)
+                    Text(stringResource(R.string.ai_micro_story_title), fontWeight = FontWeight.Bold)
                 }
             },
             text = {
@@ -142,7 +142,7 @@ fun CourseDetailsScreen(
                         Box(modifier = Modifier.fillMaxWidth().height(120.dp), contentAlignment = Alignment.Center) {
                             Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(8.dp)) {
                                 CircularProgressIndicator()
-                                Text("Kelime hikayeniz hazırlanıyor...", style = MaterialTheme.typography.bodyMedium)
+                                Text(stringResource(R.string.ai_micro_story_generating), style = MaterialTheme.typography.bodyMedium)
                             }
                         }
                     } else if (!microStory.isNullOrBlank()) {

@@ -32,4 +32,12 @@ interface AiProvider {
         targetLang: String,
         nativeLang: String
     ): RichWordDetails
+
+    suspend fun generateMicroStory(
+        apiKey: String,
+        modelId: String,
+        words: List<String>,
+        targetLang: String,
+        nativeLang: String
+    ): String
 }

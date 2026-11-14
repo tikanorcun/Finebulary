@@ -231,8 +231,16 @@ class HomeViewModel @Inject constructor(
 
     val masteryTarget: StateFlow<Int> = userPreferences.masteryTarget.stateIn(viewModelScope, SharingStarted.Eagerly, 3)
     val srsIntensity: StateFlow<Float> = userPreferences.srsIntensity.stateIn(viewModelScope, SharingStarted.Eagerly, 1.0f)
+    val srsMaxDailyCap: StateFlow<Int> = userPreferences.srsMaxDailyCap.stateIn(viewModelScope, SharingStarted.Eagerly, 20)
+    val srsPrioritizeWeakWords: StateFlow<Boolean> = userPreferences.srsPrioritizeWeakWords.stateIn(viewModelScope, SharingStarted.Eagerly, true)
+    val ttsSpeedRate: StateFlow<Float> = userPreferences.ttsSpeedRate.stateIn(viewModelScope, SharingStarted.Eagerly, 1.0f)
+    val currentStreak: StateFlow<Int> = userPreferences.currentStreak.stateIn(viewModelScope, SharingStarted.Eagerly, 0)
+
     fun setMasteryTarget(target: Int) = viewModelScope.launch { userPreferences.setMasteryTarget(target) }
     fun setSrsIntensity(intensity: Float) = viewModelScope.launch { userPreferences.setSrsIntensity(intensity) }
+    fun setSrsMaxDailyCap(cap: Int) = viewModelScope.launch { userPreferences.setSrsMaxDailyCap(cap) }
+    fun setSrsPrioritizeWeakWords(enabled: Boolean) = viewModelScope.launch { userPreferences.setSrsPrioritizeWeakWords(enabled) }
+    fun setTtsSpeedRate(rate: Float) = viewModelScope.launch { userPreferences.setTtsSpeedRate(rate) }
 
     private val _isInitialized = MutableStateFlow(false)
     val isInitialized: StateFlow<Boolean> = _isInitialized
@@ -379,6 +387,8 @@ class HomeViewModel @Inject constructor(
 
     private val _translationResult = MutableStateFlow<RichWordDetails?>(null)
     val translationResult: StateFlow<RichWordDetails?> = _translationResult
+    private val _imageOptions = MutableStateFlow<List<String>>(emptyList())
+    val imageOptions: StateFlow<List<String>> = _imageOptions
     private val _translationState = MutableStateFlow<TranslationState>(TranslationState.Idle)
     val translationState: StateFlow<TranslationState> = _translationState
     
@@ -646,6 +656,48 @@ class HomeViewModel @Inject constructor(
         _ieltsState.value = IeltsReadingState.Idle 
         _sentenceTranslation.value = null
     }
+
+    private val _microStoryState = MutableStateFlow<String?>(null)
+    val microStoryState: StateFlow<String?> = _microStoryState
+    
+    private val _isGeneratingStory = MutableStateFlow(false)
+    val isGeneratingStory: StateFlow<Boolean> = _isGeneratingStory
+
+    fun generateMicroStory(words: List<String>, targetLang: String, nativeLang: String) {
+        viewModelScope.launch {
+            _isGeneratingStory.value = true
+            _microStoryState.value = null
+            val provider = activeAiProvider.value
+            val apiKey = when (provider) {
+                AiServiceProvider.GEMINI -> geminiApiKey.value
+                AiServiceProvider.GROQ -> groqApiKey.value
+                AiServiceProvider.OPENAI -> openaiApiKey.value
+                AiServiceProvider.DEEPSEEK -> deepseekApiKey.value
+                AiServiceProvider.OPENROUTER -> openrouterApiKey.value
+            }
+            val model = currentSelectedModel.value
+
+            if (apiKey.isNullOrBlank()) {
+                _microStoryState.value = "Lütfen önce Ayarlar menüsünden yapay zeka API anahtarınızı girin."
+                _isGeneratingStory.value = false
+                return@launch
+            }
+
+            try {
+                val providerImpl = providerRegistry.getProvider(provider, showLegacyModels.value)
+                val story = providerImpl.generateMicroStory(apiKey, model, words, targetLang, nativeLang)
+                _microStoryState.value = story
+            } catch (e: Exception) {
+                _microStoryState.value = "Hikaye oluşturulamadı: ${e.message}"
+            } finally {
+                _isGeneratingStory.value = false
+            }
+        }
+    }
+
+    fun clearMicroStoryState() {
+        _microStoryState.value = null
+    }
     
     fun loadIeltsPassage(entity: com.language.finebulary.data.model.IeltsPassageEntity) {
         val gson = GsonBuilder().setLenient().create()
@@ -796,7 +848,9 @@ class HomeViewModel @Inject constructor(
             launch {
                 try {
                     if (!pKey.isNullOrBlank()) {
-                        val imageUrl = imageSearchManager.searchImage(text, pKey)
+                        val images = imageSearchManager.searchImages(text, pKey, 4)
+                        _imageOptions.value = images
+                        val imageUrl = images.firstOrNull()
                         _translationResult.value = _translationResult.value?.copy(imageUrl = imageUrl)
                     }
                 } catch (e: Exception) {

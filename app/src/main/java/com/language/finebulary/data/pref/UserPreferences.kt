@@ -59,6 +59,11 @@ class UserPreferences(private val context: Context) {
     private val DAILY_GOAL_KEY = intPreferencesKey("daily_goal")
     private val MASTERY_TARGET_KEY = intPreferencesKey("mastery_target")
     private val SRS_INTENSITY_KEY = floatPreferencesKey("srs_intensity")
+    private val SRS_MAX_DAILY_CAP_KEY = intPreferencesKey("srs_max_daily_cap")
+    private val SRS_PRIORITIZE_WEAK_WORDS_KEY = booleanPreferencesKey("srs_prioritize_weak_words")
+    private val TTS_SPEED_RATE_KEY = floatPreferencesKey("tts_speed_rate")
+    private val CURRENT_STREAK_KEY = intPreferencesKey("current_streak")
+    private val LAST_ACTIVE_DATE_KEY = stringPreferencesKey("last_active_date")
 
     val themeMode: Flow<ThemeMode> = context.dataStore.data.map { p ->
         try { ThemeMode.valueOf(p[THEME_MODE_KEY] ?: ThemeMode.AUTO.name) } catch (e: Exception) { ThemeMode.AUTO }
@@ -114,6 +119,10 @@ class UserPreferences(private val context: Context) {
     val dailyGoal: Flow<Int> = context.dataStore.data.map { it[DAILY_GOAL_KEY] ?: 10 }
     val masteryTarget: Flow<Int> = context.dataStore.data.map { it[MASTERY_TARGET_KEY] ?: 3 }
     val srsIntensity: Flow<Float> = context.dataStore.data.map { it[SRS_INTENSITY_KEY] ?: 1.0f }
+    val srsMaxDailyCap: Flow<Int> = context.dataStore.data.map { it[SRS_MAX_DAILY_CAP_KEY] ?: 20 }
+    val srsPrioritizeWeakWords: Flow<Boolean> = context.dataStore.data.map { it[SRS_PRIORITIZE_WEAK_WORDS_KEY] ?: true }
+    val ttsSpeedRate: Flow<Float> = context.dataStore.data.map { it[TTS_SPEED_RATE_KEY] ?: 1.0f }
+    val currentStreak: Flow<Int> = context.dataStore.data.map { it[CURRENT_STREAK_KEY] ?: 0 }
 
     suspend fun setThemeMode(mode: ThemeMode) { context.dataStore.edit { it[THEME_MODE_KEY] = mode.name } }
     suspend fun setAppThemeColor(color: AppThemeColor) { context.dataStore.edit { it[APP_THEME_COLOR_KEY] = color.name } }
@@ -158,6 +167,30 @@ class UserPreferences(private val context: Context) {
     suspend fun setDailyGoal(goal: Int) { context.dataStore.edit { it[DAILY_GOAL_KEY] = goal } }
     suspend fun setMasteryTarget(target: Int) { context.dataStore.edit { it[MASTERY_TARGET_KEY] = target } }
     suspend fun setSrsIntensity(intensity: Float) { context.dataStore.edit { it[SRS_INTENSITY_KEY] = intensity } }
+    suspend fun setSrsMaxDailyCap(cap: Int) { context.dataStore.edit { it[SRS_MAX_DAILY_CAP_KEY] = cap } }
+    suspend fun setSrsPrioritizeWeakWords(enabled: Boolean) { context.dataStore.edit { it[SRS_PRIORITIZE_WEAK_WORDS_KEY] = enabled } }
+    suspend fun setTtsSpeedRate(rate: Float) { context.dataStore.edit { it[TTS_SPEED_RATE_KEY] = rate } }
+
+    suspend fun recordActivity() {
+        val sdf = java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault())
+        val today = sdf.format(java.util.Date())
+        val yesterday = sdf.format(java.util.Date(System.currentTimeMillis() - 86400000L))
+
+        context.dataStore.edit { p ->
+            val lastDate = p[LAST_ACTIVE_DATE_KEY]
+            val streak = p[CURRENT_STREAK_KEY] ?: 0
+
+            if (lastDate == today) {
+                // Already recorded today
+            } else if (lastDate == yesterday) {
+                p[CURRENT_STREAK_KEY] = streak + 1
+                p[LAST_ACTIVE_DATE_KEY] = today
+            } else {
+                p[CURRENT_STREAK_KEY] = 1
+                p[LAST_ACTIVE_DATE_KEY] = today
+            }
+        }
+    }
     suspend fun setReminderTimeRange(startHour: Int, startMinute: Int, endHour: Int, endMinute: Int) {
         context.dataStore.edit { 
             it[REMINDER_START_HOUR_KEY] = startHour

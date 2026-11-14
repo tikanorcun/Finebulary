@@ -26,13 +26,35 @@ object TtsManager {
         }, enginePackage)
     }
 
-    fun speak(text: String, langCode: String = "en", isSlow: Boolean = false) {
-        if (!isInitialized) return
+    fun speak(
+        text: String,
+        langCode: String = "en",
+        isSlow: Boolean = false,
+        speechRate: Float? = null,
+        onDone: (() -> Unit)? = null
+    ) {
+        if (!isInitialized) {
+            onDone?.invoke()
+            return
+        }
         
         val locale = Locale(langCode)
         tts?.language = locale
-        val rate = if (isSlow) 0.5f else 1.0f
+        val rate = speechRate ?: if (isSlow) 0.5f else 1.0f
         tts?.setSpeechRate(rate)
+
+        if (onDone != null) {
+            tts?.setOnUtteranceProgressListener(object : android.speech.tts.UtteranceProgressListener() {
+                override fun onStart(utteranceId: String?) {}
+                override fun onDone(utteranceId: String?) {
+                    onDone()
+                }
+                @Suppress("DEPRECATION")
+                override fun onError(utteranceId: String?) {
+                    onDone()
+                }
+            })
+        }
 
         // Request highest quality network/neural voice synthesis if available on device
         val params = Bundle().apply {
@@ -40,7 +62,8 @@ object TtsManager {
             putString("quality", "high")
         }
         
-        tts?.speak(text, TextToSpeech.QUEUE_FLUSH, params, "FinebularyUtteranceId")
+        val utteranceId = "FinebularyUtterance_${System.currentTimeMillis()}"
+        tts?.speak(text, TextToSpeech.QUEUE_FLUSH, params, utteranceId)
     }
 
     fun stop() {

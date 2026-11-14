@@ -78,6 +78,8 @@ fun HomeScreen(
     val folderViewStyle by viewModel.folderViewStyle.collectAsState()
     val nativeLanguage by viewModel.nativeLanguage.collectAsState()
     val aiState by viewModel.aiGenerationState.collectAsState()
+    val currentStreak by viewModel.currentStreak.collectAsState()
+    var showBadgesDialog by remember { mutableStateOf(false) }
     
     val activeProvider by viewModel.activeAiProvider.collectAsState()
     val geminiKey by viewModel.geminiApiKey.collectAsState()
@@ -142,6 +144,12 @@ fun HomeScreen(
             TopAppBar(
                 title = { Text(title, fontWeight = FontWeight.Bold) },
                 actions = {
+                    AssistChip(
+                        onClick = { showBadgesDialog = true },
+                        label = { Text("🔥 $currentStreak Gün", fontWeight = FontWeight.Bold) },
+                        leadingIcon = { Icon(Icons.Default.EmojiEvents, contentDescription = "Badges", tint = MaterialTheme.colorScheme.primary) },
+                        modifier = Modifier.padding(end = 4.dp)
+                    )
                     IconButton(onClick = { filePickerLauncher.launch("*/*") }) {
                         Icon(Icons.Default.FileOpen, contentDescription = stringResource(R.string.import_course))
                     }
@@ -233,6 +241,13 @@ fun HomeScreen(
                 }
             }
         }
+    }
+
+    if (showBadgesDialog) {
+        BadgesDialog(
+            currentStreak = currentStreak,
+            onDismiss = { showBadgesDialog = false }
+        )
     }
 
     if (incomingSharedText != null) {
@@ -912,4 +927,75 @@ fun QuickAddDialog(text: String, viewModel: HomeViewModel, onDismiss: () -> Unit
             }) { Text(stringResource(R.string.save)) }
         }
     )
+}
+
+@Composable
+fun BadgesDialog(currentStreak: Int, onDismiss: () -> Unit) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(Icons.Default.EmojiEvents, null, tint = MaterialTheme.colorScheme.primary)
+                Spacer(Modifier.width(8.dp))
+                Text("🏆 Başarılarım ve Rozetler", fontWeight = FontWeight.Bold)
+            }
+        },
+        text = {
+            Column(
+                modifier = Modifier.fillMaxWidth().verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                BadgeItem(
+                    icon = "🔥",
+                    title = "Seri Avcısı",
+                    description = "Mevcut Serin: $currentStreak Gün",
+                    isUnlocked = currentStreak >= 1
+                )
+                BadgeItem(
+                    icon = "⭐",
+                    title = "Kelime Ustası",
+                    description = "10+ Kelime Tamamla",
+                    isUnlocked = true
+                )
+                BadgeItem(
+                    icon = "⚔️",
+                    title = "Düello Şampiyonu",
+                    description = "Düello Modunda Yarış",
+                    isUnlocked = true
+                )
+                BadgeItem(
+                    icon = "🎓",
+                    title = "IELTS Okuyucusu",
+                    description = "Akademi Modunda Okuma Yap",
+                    isUnlocked = true
+                )
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Harika!")
+            }
+        }
+    )
+}
+
+@Composable
+fun BadgeItem(icon: String, title: String, description: String, isUnlocked: Boolean) {
+    Surface(
+        shape = MaterialTheme.shapes.medium,
+        color = if (isUnlocked) MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f) else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Row(
+            modifier = Modifier.padding(12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(icon, fontSize = 28.sp)
+            Spacer(Modifier.width(12.dp))
+            Column {
+                Text(title, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium)
+                Text(description, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.secondary)
+            }
+        }
+    }
 }

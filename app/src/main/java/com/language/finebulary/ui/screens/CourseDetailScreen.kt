@@ -8,6 +8,8 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -58,6 +60,7 @@ fun CourseDetailsScreen(
     var showReviewConfig by remember { mutableStateOf(false) }
     var showMoreMenu by remember { mutableStateOf(false) }
     var showDeleteConfirm by remember { mutableStateOf(false) }
+    var showMicroStoryDialog by remember { mutableStateOf(false) }
     val reviewState by viewModel.selectedWordReviewState.collectAsState()
     
     // Pagination State
@@ -112,6 +115,63 @@ fun CourseDetailsScreen(
         )
     }
 
+    if (showMicroStoryDialog) {
+        val microStory by viewModel.microStoryState.collectAsState()
+        val isGenerating by viewModel.isGeneratingStory.collectAsState()
+
+        AlertDialog(
+            onDismissRequest = {
+                showMicroStoryDialog = false
+                viewModel.clearMicroStoryState()
+            },
+            title = {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(Icons.Default.AutoAwesome, null, tint = MaterialTheme.colorScheme.primary)
+                    Spacer(Modifier.width(8.dp))
+                    Text("📖 Yapay Zeka Kelime Hikayesi", fontWeight = FontWeight.Bold)
+                }
+            },
+            text = {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .verticalScroll(rememberScrollState()),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    if (isGenerating) {
+                        Box(modifier = Modifier.fillMaxWidth().height(120.dp), contentAlignment = Alignment.Center) {
+                            Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                                CircularProgressIndicator()
+                                Text("Kelime hikayeniz hazırlanıyor...", style = MaterialTheme.typography.bodyMedium)
+                            }
+                        }
+                    } else if (!microStory.isNullOrBlank()) {
+                        Surface(
+                            color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f),
+                            shape = MaterialTheme.shapes.medium,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text(
+                                text = microStory!!,
+                                style = MaterialTheme.typography.bodyLarge,
+                                lineHeight = 24.sp,
+                                modifier = Modifier.padding(16.dp)
+                            )
+                        }
+                    }
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    showMicroStoryDialog = false
+                    viewModel.clearMicroStoryState()
+                }) {
+                    Text("Kapat")
+                }
+            }
+        )
+    }
+
     Scaffold(
         topBar = {
             Surface(
@@ -134,6 +194,15 @@ fun CourseDetailsScreen(
                             fontWeight = FontWeight.Bold,
                             modifier = Modifier.weight(1f).padding(start = 12.dp)
                         )
+                        IconButton(onClick = {
+                            val selectedWordsList = words.filter { it.id in selectedWordIds }.map { it.front }
+                            if (selectedWordsList.isNotEmpty()) {
+                                viewModel.generateMicroStory(selectedWordsList, course.targetLanguageCode, course.nativeLanguageCode)
+                                showMicroStoryDialog = true
+                            }
+                        }) {
+                            Icon(Icons.Default.AutoAwesome, contentDescription = "AI Hikaye Üret", tint = MaterialTheme.colorScheme.primary)
+                        }
                         IconButton(onClick = {
                             if (selectedWordIds.size == words.size) {
                                 selectedWordIds = emptySet()

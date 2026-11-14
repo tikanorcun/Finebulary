@@ -23,12 +23,22 @@ object CloudAudioPlayer {
         provider: String, // "OPENAI", "ELEVENLABS", "AZURE", "DEEPGRAM", "STANDARD"
         apiKey: String,
         langCode: String = "en",
-        azureRegion: String = "eastus"
+        azureRegion: String = "eastus",
+        speechRate: Float = 1.0f,
+        onDone: (() -> Unit)? = null
     ): Boolean = withContext(Dispatchers.IO) {
         try {
             stop()
+            if (provider == "STANDARD" || apiKey.isBlank()) {
+                withContext(Dispatchers.Main) {
+                    TtsManager.speak(text, langCode, speechRate = speechRate, onDone = onDone)
+                }
+                return@withContext true
+            }
+
             val client = OkHttpClient.Builder().build()
             val tempFile = File(context.cacheDir, "speech_temp.mp3")
+            var success = false
 
             when (provider) {
                 "OPENAI" -> {
@@ -44,13 +54,15 @@ object CloudAudioPlayer {
                         .post(body)
                         .build()
                     val response = client.newCall(request).execute()
-                    if (!response.isSuccessful) return@withContext false
-                    response.body?.byteStream()?.use { input ->
-                        FileOutputStream(tempFile).use { output -> input.copyTo(output) }
+                    if (response.isSuccessful) {
+                        response.body?.byteStream()?.use { input ->
+                            FileOutputStream(tempFile).use { output -> input.copyTo(output) }
+                        }
+                        success = true
                     }
                 }
                 "ELEVENLABS" -> {
-                    val voiceId = "21m00Tcm4TlvDq8ikWAM" // Rachel
+                    val voiceId = "21m00Tcm4TlvDq8ikWAM"
                     val json = JSONObject().apply {
                         put("text", text)
                         put("model_id", "eleven_multilingual_v2")
@@ -63,9 +75,11 @@ object CloudAudioPlayer {
                         .post(body)
                         .build()
                     val response = client.newCall(request).execute()
-                    if (!response.isSuccessful) return@withContext false
-                    response.body?.byteStream()?.use { input ->
-                        FileOutputStream(tempFile).use { output -> input.copyTo(output) }
+                    if (response.isSuccessful) {
+                        response.body?.byteStream()?.use { input ->
+                            FileOutputStream(tempFile).use { output -> input.copyTo(output) }
+                        }
+                        success = true
                     }
                 }
                 "AZURE" -> {
@@ -79,9 +93,11 @@ object CloudAudioPlayer {
                         .post(body)
                         .build()
                     val response = client.newCall(request).execute()
-                    if (!response.isSuccessful) return@withContext false
-                    response.body?.byteStream()?.use { input ->
-                        FileOutputStream(tempFile).use { output -> input.copyTo(output) }
+                    if (response.isSuccessful) {
+                        response.body?.byteStream()?.use { input ->
+                            FileOutputStream(tempFile).use { output -> input.copyTo(output) }
+                        }
+                        success = true
                     }
                 }
                 "DEEPGRAM" -> {
@@ -92,32 +108,45 @@ object CloudAudioPlayer {
                         .post("{\"text\":\"$text\"}".toRequestBody("application/json; charset=utf-8".toMediaType()))
                         .build()
                     val response = client.newCall(request).execute()
-                    if (!response.isSuccessful) return@withContext false
-                    response.body?.byteStream()?.use { input ->
-                        FileOutputStream(tempFile).use { output -> input.copyTo(output) }
+                    if (response.isSuccessful) {
+                        response.body?.byteStream()?.use { input ->
+                            FileOutputStream(tempFile).use { output -> input.copyTo(output) }
+                        }
+                        success = true
                     }
                 }
-                "STANDARD" -> {
-                    return@withContext false
+            }
+
+            if (!success) {
+                // Fallback to local TTS if Cloud TTS request failed
+                withContext(Dispatchers.Main) {
+                    TtsManager.speak(text, langCode, speechRate = speechRate, onDone = onDone)
                 }
-                else -> return@withContext false
+                return@withContext true
             }
 
             withContext(Dispatchers.Main) {
                 mediaPlayer = MediaPlayer().apply {
                     setDataSource(tempFile.absolutePath)
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                        playbackParams = playbackParams.setSpeed(speechRate)
+                    }
                     prepare()
                     start()
                     setOnCompletionListener {
                         release()
                         mediaPlayer = null
+                        onDone?.invoke()
                     }
                 }
             }
             true
         } catch (e: Exception) {
-            Log.e(TAG, "CloudAudioPlayer error: ${e.message}", e)
-            false
+            Log.e(TAG, "CloudAudioPlayer error, falling back to TtsManager: ${e.message}", e)
+            withContext(Dispatchers.Main) {
+                TtsManager.speak(text, langCode, speechRate = speechRate, onDone = onDone)
+            }
+            true
         }
     }
 

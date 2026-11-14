@@ -123,7 +123,18 @@ class ReviewViewModel @Inject constructor(
             }
             activeMethodsList = if (methods.isEmpty()) listOf(QuestionType.MULTIPLE_CHOICE) else methods
 
-            val dueWords = repository.getDueWords(courseId).first().shuffled().take(10)
+            val maxCap = userPreferences.srsMaxDailyCap.first()
+            val prioritizeWeak = userPreferences.srsPrioritizeWeakWords.first()
+            val allDueWords = repository.getDueWords(courseId).first()
+
+            val sortedWords = if (prioritizeWeak) {
+                val reviewStatesMap = repository.getAllReviewStatesRaw().associateBy { it.wordId }
+                allDueWords.sortedBy { word -> reviewStatesMap[word.id]?.reps ?: 0 }
+            } else {
+                allDueWords.shuffled()
+            }
+
+            val dueWords = sortedWords.take(maxCap)
             
             if (dueWords.isEmpty()) {
                 _isFinished.value = true
@@ -224,6 +235,7 @@ class ReviewViewModel @Inject constructor(
                     // Increment daily progress when a word is fully mastered/reviewed in session
                     val today = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
                     repository.incrementDailyProgress(today)
+                    userPreferences.recordActivity()
                 }
             } else if (status == ReviewStatus.WRONG) {
                 masteryScores[word.id] = maxOf(0, (masteryScores[word.id] ?: 0) - 1)

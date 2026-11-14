@@ -1,5 +1,8 @@
 package com.language.finebulary.ui.screens
 
+import android.Manifest
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -89,6 +92,11 @@ fun IeltsReadingScreen(
 
     var isSentenceMode by remember { mutableStateOf(false) }
     var selectedSentence by remember { mutableStateOf<String?>(null) }
+
+    var selectedSpeechRate by remember { mutableFloatStateOf(1.0f) }
+    var activeSentenceIndex by remember { mutableIntStateOf(-1) }
+    var shadowingSentence by remember { mutableStateOf<String?>(null) }
+    val speechManager = remember { com.language.finebulary.util.SpeechRecognizerManager(context) }
 
     val translationResult by viewModel.translationResult.collectAsState()
     val translationState by viewModel.translationState.collectAsState()
@@ -312,31 +320,56 @@ fun IeltsReadingScreen(
                                 val azureKey by viewModel.azureSpeechApiKey.collectAsState()
                                 val deepgramKey by viewModel.deepgramApiKey.collectAsState()
 
+                                FilterChip(
+                                    selected = selectedSpeechRate != 1.0f,
+                                    onClick = {
+                                        selectedSpeechRate = when (selectedSpeechRate) {
+                                            1.0f -> 1.25f
+                                            1.25f -> 1.5f
+                                            1.5f -> 0.75f
+                                            else -> 1.0f
+                                        }
+                                    },
+                                    label = { Text("${selectedSpeechRate}x", fontSize = 12.sp, fontWeight = FontWeight.Bold) }
+                                )
+
                                 IconButton(onClick = {
                                     scope.launch {
                                         val targetLangCode = selectedTargetLang.code
-                                        if (audioProvider == "STANDARD") {
-                                            TtsManager.speak(s.passage.passage, targetLangCode)
-                                        } else {
-                                            val activeKey = when (audioProvider) {
-                                                "ELEVENLABS" -> elevenlabsKey
-                                                "AZURE" -> azureKey
-                                                "DEEPGRAM" -> deepgramKey
-                                                else -> openaiKey
-                                            }
+                                        val sentenceRegex = Regex("(?<=[.!?])\\s+")
+                                        val sentences = s.passage.passage.split(sentenceRegex).filter { it.isNotBlank() }
 
-                                            if (!activeKey.isNullOrBlank()) {
-                                                val success = CloudAudioPlayer.playSpeech(context, s.passage.passage, audioProvider, activeKey, targetLangCode)
-                                                if (!success) {
-                                                    TtsManager.speak(s.passage.passage, targetLangCode)
-                                                }
-                                            } else {
-                                                TtsManager.speak(s.passage.passage, targetLangCode)
-                                            }
+                                        if (sentences.isEmpty()) return@launch
+
+                                        val activeKey = when (audioProvider) {
+                                            "ELEVENLABS" -> elevenlabsKey
+                                            "AZURE" -> azureKey
+                                            "DEEPGRAM" -> deepgramKey
+                                            else -> openaiKey
+                                        } ?: ""
+
+                                        for ((idx, snt) in sentences.withIndex()) {
+                                            activeSentenceIndex = idx
+                                            val deferred = kotlinx.coroutines.CompletableDeferred<Unit>()
+                                            CloudAudioPlayer.playSpeech(
+                                                context = context,
+                                                text = snt,
+                                                provider = audioProvider,
+                                                apiKey = activeKey,
+                                                langCode = targetLangCode,
+                                                speechRate = selectedSpeechRate,
+                                                onDone = { deferred.complete(Unit) }
+                                            )
+                                            deferred.await()
                                         }
+                                        activeSentenceIndex = -1
                                     }
                                 }) {
-                                    Icon(Icons.AutoMirrored.Filled.VolumeUp, contentDescription = "Metni Dinle", tint = MaterialTheme.colorScheme.primary)
+                                    Icon(
+                                        imageVector = if (activeSentenceIndex >= 0) Icons.Default.PauseCircle else Icons.AutoMirrored.Filled.VolumeUp,
+                                        contentDescription = "Metni Dinle",
+                                        tint = MaterialTheme.colorScheme.primary
+                                    )
                                 }
                             }
                             
@@ -364,64 +397,95 @@ fun IeltsReadingScreen(
                                 } else {
                                     Column(modifier = Modifier.padding(20.dp)) {
                                         val sentenceRegex = Regex("(?<=[.!?])\\s+")
-                                        val sentences = s.passage.passage.split(sentenceRegex)
+                                        val sentences = s.passage.passage.split(sentenceRegex).filter { it.isNotBlank() }
                                         
-                                        sentences.forEach { sentence ->
-                                            if (isSentenceMode) {
-                                                Text(
-                                                    text = sentence,
-                                                    style = MaterialTheme.typography.bodyLarge,
-                                                    lineHeight = 28.sp,
-                                                    modifier = Modifier
-                                                        .fillMaxWidth()
-                                                        .clickable {
-                                                            selectedSentence = sentence
-                                                            viewModel.translateSentence(sentence, "en", selectedNativeLang.code)
-                                                        }
-                                                        .padding(vertical = 4.dp)
-                                                )
-                                            } else {
-                                                val isAsianLang = selectedTargetLang.code in listOf("ja", "zh", "ko")
-                                                if (isAsianLang) {
-                                                    // Asya dillerinde (Japonca, Çince, Korece) boşluk olmayabilir, karakter karakter veya kelime bazlı tıklama
-                                                    FlowRow(
-                                                        modifier = Modifier.padding(vertical = 2.dp),
-                                                        horizontalArrangement = Arrangement.spacedBy(2.dp)
-                                                    ) {
-                                                        sentence.forEach { char ->
-                                                            val cleanChar = char.toString()
-                                                            if (cleanChar.isNotBlank()) {
-                                                                Text(
-                                                                    text = cleanChar,
-                                                                    style = MaterialTheme.typography.bodyLarge,
-                                                                    lineHeight = 28.sp,
-                                                                    modifier = Modifier.clickable {
-                                                                        wordToLookup = cleanChar
-                                                                        viewModel.autoTranslate(cleanChar, selectedTargetLang.code, selectedNativeLang.code)
+                                        sentences.forEachIndexed { sentenceIdx, sentence ->
+                                            val isActive = activeSentenceIndex == sentenceIdx
+                                            val bgColor = if (isActive) MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.6f) else Color.Transparent
+
+                                            Surface(
+                                                color = bgColor,
+                                                shape = MaterialTheme.shapes.small,
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                                    .padding(vertical = 4.dp)
+                                            ) {
+                                                Row(
+                                                    modifier = Modifier.padding(6.dp),
+                                                    verticalAlignment = Alignment.CenterVertically
+                                                ) {
+                                                    if (isSentenceMode) {
+                                                        Text(
+                                                            text = sentence,
+                                                            style = MaterialTheme.typography.bodyLarge,
+                                                            lineHeight = 28.sp,
+                                                            fontWeight = if (isActive) FontWeight.Bold else FontWeight.Normal,
+                                                            modifier = Modifier
+                                                                .weight(1f)
+                                                                .clickable {
+                                                                    selectedSentence = sentence
+                                                                    viewModel.translateSentence(sentence, "en", selectedNativeLang.code)
+                                                                }
+                                                        )
+                                                    } else {
+                                                        val isAsianLang = selectedTargetLang.code in listOf("ja", "zh", "ko")
+                                                        Box(modifier = Modifier.weight(1f)) {
+                                                            if (isAsianLang) {
+                                                                FlowRow(
+                                                                    modifier = Modifier.padding(vertical = 2.dp),
+                                                                    horizontalArrangement = Arrangement.spacedBy(2.dp)
+                                                                ) {
+                                                                    sentence.forEach { char ->
+                                                                        val cleanChar = char.toString()
+                                                                        if (cleanChar.isNotBlank()) {
+                                                                            Text(
+                                                                                text = cleanChar,
+                                                                                style = MaterialTheme.typography.bodyLarge,
+                                                                                lineHeight = 28.sp,
+                                                                                fontWeight = if (isActive) FontWeight.Bold else FontWeight.Normal,
+                                                                                modifier = Modifier.clickable {
+                                                                                    wordToLookup = cleanChar
+                                                                                    viewModel.autoTranslate(cleanChar, selectedTargetLang.code, selectedNativeLang.code)
+                                                                                }
+                                                                            )
+                                                                        }
                                                                     }
-                                                                )
+                                                                }
+                                                            } else {
+                                                                FlowRow(
+                                                                    modifier = Modifier.padding(vertical = 2.dp),
+                                                                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                                                                ) {
+                                                                    sentence.split(Regex("\\s+")).forEach { word ->
+                                                                        val cleanWord = word.trim().replace(Regex("[^\\p{L}\\p{Nd}]"), "")
+                                                                        Text(
+                                                                            text = word,
+                                                                            style = MaterialTheme.typography.bodyLarge,
+                                                                            lineHeight = 28.sp,
+                                                                            fontWeight = if (isActive) FontWeight.Bold else FontWeight.Normal,
+                                                                            modifier = Modifier.clickable { 
+                                                                                if (cleanWord.isNotEmpty()) {
+                                                                                    wordToLookup = cleanWord
+                                                                                    viewModel.autoTranslate(cleanWord, selectedTargetLang.code, selectedNativeLang.code)
+                                                                                }
+                                                                            }
+                                                                        )
+                                                                    }
+                                                                }
                                                             }
                                                         }
                                                     }
-                                                } else {
-                                                    FlowRow(
-                                                        modifier = Modifier.padding(vertical = 2.dp),
-                                                        horizontalArrangement = Arrangement.spacedBy(4.dp)
+
+                                                    IconButton(
+                                                        onClick = { shadowingSentence = sentence },
+                                                        modifier = Modifier.size(32.dp)
                                                     ) {
-                                                        sentence.split(Regex("\\s+")).forEach { word ->
-                                                            val cleanWord = word.trim().replace(Regex("[^\\p{L}\\p{Nd}]"), "")
-                                                            Text(
-                                                                text = word,
-                                                                style = MaterialTheme.typography.bodyLarge,
-                                                                lineHeight = 28.sp,
-                                                                modifier = Modifier.clickable { 
-                                                                    if (cleanWord.isNotEmpty()) {
-                                                                        wordToLookup = cleanWord
-                                                                        viewModel.autoTranslate(cleanWord, selectedTargetLang.code, selectedNativeLang.code)
-                                                                    }
-                                                                }
-                                                            )
-                                                        }
+                                                        Icon(
+                                                            imageVector = Icons.Default.Mic,
+                                                            contentDescription = "Shadowing Practice",
+                                                            tint = MaterialTheme.colorScheme.primary,
+                                                            modifier = Modifier.size(18.dp)
+                                                        )
                                                     }
                                                 }
                                             }
@@ -531,6 +595,7 @@ fun IeltsReadingScreen(
                     initialFrontText = wordToLookup,
                     translationState = translationState,
                     exampleSentenceSource = exampleSentenceSource,
+                    imageOptions = viewModel.imageOptions.collectAsState().value,
                     onDismiss = { wordToLookup = null; viewModel.clearTranslationState() },
                     onConfirm = { front, back, definition, synonyms, antonyms, example, imageUrl ->
                         wordToAdd = com.language.finebulary.data.api.AiGeneratedWord(
@@ -626,8 +691,127 @@ fun IeltsReadingScreen(
                     }
                 )
             }
+
+            // Shadowing Practice Dialog
+            if (shadowingSentence != null) {
+                SentenceShadowingDialog(
+                    sentence = shadowingSentence!!,
+                    targetLangCode = selectedTargetLang.code,
+                    speechManager = speechManager,
+                    onDismiss = { shadowingSentence = null }
+                )
+            }
         }
     }
+}
+
+@Composable
+fun SentenceShadowingDialog(
+    sentence: String,
+    targetLangCode: String,
+    speechManager: com.language.finebulary.util.SpeechRecognizerManager,
+    onDismiss: () -> Unit
+) {
+    var isListening by remember { mutableStateOf(false) }
+    var spokenText by remember { mutableStateOf("") }
+    var matchPercentage by remember { mutableIntStateOf(-1) }
+
+    val permissionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (isGranted) {
+            isListening = true
+            speechManager.startListening(targetLangCode) { result ->
+                isListening = false
+                spokenText = result
+                matchPercentage = calculateSimilarity(sentence, result)
+            }
+        }
+    }
+
+    AlertDialog(
+        onDismissRequest = {
+            speechManager.stopListening()
+            onDismiss()
+        },
+        title = { Text("🎙️ Telaffuz & Shadowing Pratiği", fontWeight = FontWeight.Bold) },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                Text(
+                    text = sentence,
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontWeight = FontWeight.SemiBold,
+                    color = MaterialTheme.colorScheme.primary
+                )
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    OutlinedButton(
+                        onClick = { TtsManager.speak(sentence, targetLangCode) },
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Icon(Icons.AutoMirrored.Filled.VolumeUp, null)
+                        Spacer(Modifier.width(4.dp))
+                        Text("Dinle")
+                    }
+
+                    Button(
+                        onClick = {
+                            permissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = if (isListening) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
+                        ),
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Icon(if (isListening) Icons.Default.MicOff else Icons.Default.Mic, null)
+                        Spacer(Modifier.width(4.dp))
+                        Text(if (isListening) "Dinliyor..." else "Söyle")
+                    }
+                }
+
+                if (spokenText.isNotBlank()) {
+                    Surface(
+                        shape = MaterialTheme.shapes.medium,
+                        color = MaterialTheme.colorScheme.surfaceVariant,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Column(modifier = Modifier.padding(12.dp)) {
+                            Text("Söylediğin: \"$spokenText\"", style = MaterialTheme.typography.bodyMedium)
+                            Spacer(Modifier.height(4.dp))
+                            Text(
+                                text = "Doğruluk Skoru: %$matchPercentage " + when {
+                                    matchPercentage >= 80 -> "🏆 Harika!"
+                                    matchPercentage >= 50 -> "👍 Çok İyi!"
+                                    else -> "🔄 Tekrar Dene!"
+                                },
+                                fontWeight = FontWeight.Bold,
+                                color = if (matchPercentage >= 70) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error
+                            )
+                        }
+                    }
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = {
+                speechManager.stopListening()
+                onDismiss()
+            }) {
+                Text("Kapat")
+            }
+        }
+    )
+}
+
+private fun calculateSimilarity(s1: String, s2: String): Int {
+    val clean1 = s1.lowercase().replace(Regex("[^\\p{L}\\p{Nd}\\s]"), "").split(Regex("\\s+")).filter { it.isNotBlank() }
+    val clean2 = s2.lowercase().replace(Regex("[^\\p{L}\\p{Nd}\\s]"), "").split(Regex("\\s+")).filter { it.isNotBlank() }
+    if (clean1.isEmpty()) return 0
+    val matches = clean2.count { clean1.contains(it) }
+    return ((matches.toFloat() / clean1.size.toFloat()) * 100).toInt().coerceIn(0, 100)
 }
 
 @Composable

@@ -133,7 +133,12 @@ fun DuelScreen(
 
                     Button(
                         onClick = {
-                            val challengeText = context.getString(R.string.challenge_score_msg, score, course.name)
+                            val timeUsed = 60 - timeLeft
+                            val challengeText = "⚔️ Finebulary Kelime Düellosu Meydan Okuması!\n\n" +
+                                "🏆 Skorum: $score Doğru Cevap ($timeUsed saniye)\n" +
+                                "📁 Klasör: ${course.name}\n\n" +
+                                "Benim bu rekorumu geçebilir misin? Finebulary uygulamasını aç ve yarışa katıl! 🚀"
+                            
                             val sendIntent = Intent().apply {
                                 action = Intent.ACTION_SEND
                                 putExtra(Intent.EXTRA_TEXT, challengeText)

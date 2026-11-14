@@ -10,14 +10,18 @@ class ImageSearchManager @Inject constructor(
     private val pexelsApi: PexelsApiService
 ) {
     suspend fun searchImage(query: String, apiKey: String): String? {
-        if (apiKey.isBlank()) return null
+        return searchImages(query, apiKey, 1).firstOrNull()
+    }
+
+    suspend fun searchImages(query: String, apiKey: String, count: Int = 4): List<String> {
+        if (apiKey.isBlank()) return emptyList()
         
         return try {
-            val response = pexelsApi.searchPhotos(apiKey, query, 1)
-            response.photos.firstOrNull()?.src?.medium
+            val response = pexelsApi.searchPhotos(apiKey, query, count)
+            response.photos.map { it.src.medium }
         } catch (e: Exception) {
             Log.e("ImageSearchManager", "Pexels API Error: ${e.message}")
-            null
+            emptyList()
         }
     }
 }

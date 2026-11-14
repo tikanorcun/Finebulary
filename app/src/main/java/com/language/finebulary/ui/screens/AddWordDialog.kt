@@ -1,6 +1,8 @@
 package com.language.finebulary.ui.screens
 
 import android.widget.Toast
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
@@ -41,6 +43,7 @@ fun AddWordDialog(
     initialFrontText: String? = null,
     translationState: TranslationState = TranslationState.Idle,
     exampleSentenceSource: String = "WIKTIONARY",
+    imageOptions: List<String> = emptyList(),
     onDismiss: () -> Unit,
     onConfirm: (String, String, String?, String?, String?, String?, String?) -> Unit,
     onTranslate: (String, String, String) -> Unit,
@@ -179,6 +182,33 @@ fun AddWordDialog(
                 if (isImageLoading) {
                     Box(modifier = Modifier.fillMaxWidth().height(150.dp), contentAlignment = Alignment.Center) {
                         CircularProgressIndicator(modifier = Modifier.size(32.dp), strokeWidth = 2.dp)
+                    }
+                } else if (imageOptions.size > 1) {
+                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Text("Görsel Seçimi (Seçmek için görsele dokunun):", style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold)
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(6.dp)
+                        ) {
+                            imageOptions.take(4).forEach { url ->
+                                val isSelected = url == imageUrl
+                                Card(
+                                    shape = MaterialTheme.shapes.small,
+                                    border = if (isSelected) BorderStroke(2.dp, MaterialTheme.colorScheme.primary) else null,
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .height(75.dp)
+                                        .clickable { imageUrl = url }
+                                ) {
+                                    AsyncImage(
+                                        model = url,
+                                        contentDescription = null,
+                                        modifier = Modifier.fillMaxSize(),
+                                        contentScale = ContentScale.Crop
+                                    )
+                                }
+                            }
+                        }
                     }
                 } else if (!imageUrl.isNullOrBlank()) {
                     AsyncImage(

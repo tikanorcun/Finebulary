@@ -260,4 +260,39 @@ class OpenAiCompatibleProvider(
             RichWordDetails(front = word, translation = null, definition = null, synonyms = null, example = null)
         }
     }
+
+    override suspend fun generateMicroStory(
+        apiKey: String,
+        modelId: String,
+        words: List<String>,
+        targetLang: String,
+        nativeLang: String
+    ): String = withContext(Dispatchers.IO) {
+        val url = "${baseUrl}v1/chat/completions"
+        val auth = "Bearer $apiKey"
+        val wordListStr = words.joinToString(", ")
+        
+        val prompt = """
+            Write a short, engaging 3-sentence micro-story in $targetLang incorporating these vocabulary words: $wordListStr.
+            Enclose each target word in **bold** markdown (**word**).
+            Directly below the story, provide a line break and then the complete translation of the story into $nativeLang.
+            Do not include extra commentary or intro text.
+        """.trimIndent()
+
+        val request = OpenAiChatRequest(
+            model = modelId,
+            messages = listOf(
+                OpenAiMessage("system", "You are a creative language tutor."),
+                OpenAiMessage("user", prompt)
+            )
+        )
+
+        try {
+            val response = apiService.chatCompletion(url, auth, request)
+            response.choices.firstOrNull()?.message?.content ?: "Story generation failed."
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to generate micro story: ${e.message}")
+            "Story generation error: ${e.message}"
+        }
+    }
 }

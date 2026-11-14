@@ -250,6 +250,15 @@
     <string name="base_form_label">Kelime Kökü: %1$s</string>
     <string name="root_word_label">Düzeltme: %1$s</string>
 
+    <!-- Changelog v2.3.4 -->
+    <string name="changelog_v2_3_4_title">Sürüm 2.3.4 - AI Hikayeleri, Karaoke Okuma &amp; Oyunlaştırma</string>
+    <string name="changelog_v2_3_4_item_1">Yapay Zeka Kelime Hikayeleri eklendi: Seçilen kelimelerden koyu vurgulu kısa hikayeler ve çevirileri üretilebilir</string>
+    <string name="changelog_v2_3_4_item_2">Karaoke Okuma &amp; Shadowing Pratiği eklendi: Canlı cümle takibi, 0.75x-1.5x hız seçimi ve mikrofona konuşarak telaffuz skoru alma</string>
+    <string name="changelog_v2_3_4_item_3">Oyunlaştırma &amp; Günlük Seri Takibi eklendi: 🔥 Günlük seri sayacı ve kazanılabilir başarım rozetleri</string>
+    <string name="changelog_v2_3_4_item_4">Android Ana Ekranı için Günün Kelimesi Widget\'ı eklendi</string>
+    <string name="changelog_v2_3_4_item_5">Kelime ekleme diyaloğuna çoklu Pexels görsel seçici (carousel) eklendi</string>
+    <string name="changelog_v2_3_4_item_6">SRS tekrar seans sınırı (20 kelime) ve akıllı bulut ses motoru düşüşü (TTS fallback) entegre edildi</string>
+
     <!-- Changelog v2.3.3 -->
     <string name="changelog_v2_3_3_title">Sürüm 2.3.3 - Güvenlik Sertleştirmeleri ve Performans</string>
     <string name="changelog_v2_3_3_item_1">Tüm ağ API çağrılarında şifreli HTTPS kullanımı zorunlu hale getirildi</string>

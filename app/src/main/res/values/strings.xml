@@ -252,6 +252,15 @@
     <string name="base_form_label">Base Form: %1$s</string>
     <string name="root_word_label">Root Word: %1$s</string>
 
+    <!-- Changelog v2.3.4 -->
+    <string name="changelog_v2_3_4_title">Version 2.3.4 - AI Stories, Karaoke Reader &amp; Gamification</string>
+    <string name="changelog_v2_3_4_item_1">Added AI Micro-Story Generator: Create short 3-sentence stories for selected vocabulary with bold keywords and translations</string>
+    <string name="changelog_v2_3_4_item_2">Added Karaoke Sentence Highlighting &amp; Shadowing Practice: Real-time reading highlights, adjustable speed controls (0.75x-1.5x), and pronunciation accuracy scoring</string>
+    <string name="changelog_v2_3_4_item_3">Added Gamification &amp; Streak Tracking: Track your daily active learning streak and unlock achievement badges</string>
+    <string name="changelog_v2_3_4_item_4">Added Word of the Day AppWidget for Android Home Screen</string>
+    <string name="changelog_v2_3_4_item_5">Added Pexels Multi-Image Carousel Selector in word creation and translation dialogs</string>
+    <string name="changelog_v2_3_4_item_6">Implemented SRS Review Capping (20 words/session) and smart Cloud-to-Local TTS fallback</string>
+
     <!-- Changelog v2.3.3 -->
     <string name="changelog_v2_3_3_title">Version 2.3.3 - Security Hardening &amp; Performance</string>
     <string name="changelog_v2_3_3_item_1">Enforced encrypted HTTPS connections for all network API calls</string>

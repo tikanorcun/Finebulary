@@ -34,6 +34,19 @@ fun ChangelogDialog(
                     .verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(24.dp)
             ) {
+                // Version 2.3.4
+                ChangelogVersionSection(
+                    versionTitle = stringResource(R.string.changelog_v2_3_4_title),
+                    items = listOf(
+                        stringResource(R.string.changelog_v2_3_4_item_1),
+                        stringResource(R.string.changelog_v2_3_4_item_2),
+                        stringResource(R.string.changelog_v2_3_4_item_3),
+                        stringResource(R.string.changelog_v2_3_4_item_4),
+                        stringResource(R.string.changelog_v2_3_4_item_5),
+                        stringResource(R.string.changelog_v2_3_4_item_6)
+                    )
+                )
+
                 // Version 2.3.3
                 ChangelogVersionSection(
                     versionTitle = stringResource(R.string.changelog_v2_3_3_title),

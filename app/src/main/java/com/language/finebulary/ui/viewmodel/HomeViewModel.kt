@@ -191,6 +191,9 @@ class HomeViewModel @Inject constructor(
     val hasSeenAppTutorial: StateFlow<Boolean> = userPreferences.hasSeenAppTutorial.stateIn(viewModelScope, SharingStarted.Eagerly, false)
     fun setHasSeenAppTutorial(seen: Boolean) = viewModelScope.launch { userPreferences.setHasSeenAppTutorial(seen) }
 
+    val translationProvider: StateFlow<String> = userPreferences.translationProvider.stateIn(viewModelScope, SharingStarted.Eagerly, "GOOGLE")
+    fun setTranslationProvider(provider: String) = viewModelScope.launch { userPreferences.setTranslationProvider(provider) }
+
     val remindersEnabled: StateFlow<Boolean> = userPreferences.remindersEnabled.stateIn(viewModelScope, SharingStarted.Eagerly, initialValue = true)
     val reminderHour: StateFlow<Int> = userPreferences.reminderHour.stateIn(viewModelScope, SharingStarted.Eagerly, initialValue = 9)
     val reminderMinute: StateFlow<Int> = userPreferences.reminderMinute.stateIn(viewModelScope, SharingStarted.Eagerly, initialValue = 0)
@@ -653,7 +656,8 @@ class HomeViewModel @Inject constructor(
             _sentenceTranslation.value = null
             _translationState.value = TranslationState.Loading()
             try {
-                val result = TranslationManager.translate(text, targetLangCode, nativeLangCode)
+                val tProvider = translationProvider.value
+                val result = TranslationManager.translate(text, targetLangCode, nativeLangCode, tProvider)
                 if (result == null) {
                     _translationState.value = TranslationState.Error("Sentence translation failed.")
                 } else {
@@ -674,11 +678,12 @@ class HomeViewModel @Inject constructor(
             
             val pKey = pexelsApiKey.value
             val fetchExSource = userPreferences.exampleSentenceSource.first()
+            val tProvider = translationProvider.value
             
             // 1. Translation Job
             launch {
                 try {
-                    val translation = TranslationManager.translate(text, targetLangCode, nativeLangCode)
+                    val translation = TranslationManager.translate(text, targetLangCode, nativeLangCode, tProvider)
                     if (translation == null) {
                         _translationState.value = TranslationState.Error("Translation failed.")
                     } else {

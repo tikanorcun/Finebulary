@@ -261,6 +261,70 @@ fun ApiKeysScreen(
 
             HorizontalDivider()
 
+            val translationProvider by viewModel.translationProvider.collectAsState()
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text(stringResource(R.string.translation_service_title), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                Text(stringResource(R.string.translation_service_desc), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f))
+
+                var showTranslationMenu by remember { mutableStateOf(false) }
+                Box(modifier = Modifier.fillMaxWidth()) {
+                    OutlinedCard(
+                        onClick = { showTranslationMenu = true },
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = MaterialTheme.shapes.small,
+                        colors = CardDefaults.outlinedCardColors(containerColor = MaterialTheme.colorScheme.surface)
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(16.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            val transText = when (translationProvider) {
+                                "GOOGLE" -> stringResource(R.string.translation_google)
+                                "MYMEMORY" -> stringResource(R.string.translation_mymemory)
+                                "AI" -> stringResource(R.string.translation_ai)
+                                else -> stringResource(R.string.translation_google)
+                            }
+                            Text(
+                                text = transText,
+                                modifier = Modifier.weight(1f),
+                                style = MaterialTheme.typography.bodyLarge
+                            )
+                            Icon(Icons.Default.ArrowDropDown, contentDescription = null)
+                        }
+                    }
+
+                    DropdownMenu(
+                        expanded = showTranslationMenu,
+                        onDismissRequest = { showTranslationMenu = false },
+                        modifier = Modifier.fillMaxWidth(0.9f)
+                    ) {
+                        DropdownMenuItem(
+                            text = { Text(stringResource(R.string.translation_google)) },
+                            onClick = {
+                                viewModel.setTranslationProvider("GOOGLE")
+                                showTranslationMenu = false
+                            }
+                        )
+                        DropdownMenuItem(
+                            text = { Text(stringResource(R.string.translation_mymemory)) },
+                            onClick = {
+                                viewModel.setTranslationProvider("MYMEMORY")
+                                showTranslationMenu = false
+                            }
+                        )
+                        DropdownMenuItem(
+                            text = { Text(stringResource(R.string.translation_ai)) },
+                            onClick = {
+                                viewModel.setTranslationProvider("AI")
+                                showTranslationMenu = false
+                            }
+                        )
+                    }
+                }
+            }
+
+            HorizontalDivider()
+
             val exampleSentenceSource by viewModel.exampleSentenceSource.collectAsState()
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text(stringResource(R.string.example_sentence_service), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)

@@ -61,6 +61,26 @@ fun AddWordDialog(
 
     var exampleTranslation by remember { mutableStateOf<String?>(null) }
     var isExampleTranslating by remember { mutableStateOf(false) }
+    var detectedLanguageName by remember { mutableStateOf<String?>(null) }
+
+    LaunchedEffect(front) {
+        if (front.length >= 2) {
+            kotlinx.coroutines.delay(600L)
+            try {
+                val identifier = com.google.mlkit.nl.languageid.LanguageIdentification.getClient()
+                identifier.identifyLanguage(front.trim())
+                    .addOnSuccessListener { code ->
+                        if (code != "und") {
+                            detectedLanguageName = code.uppercase()
+                        } else {
+                            detectedLanguageName = null
+                        }
+                    }
+            } catch (_: Exception) {}
+        } else {
+            detectedLanguageName = null
+        }
+    }
 
     LaunchedEffect(translationResult) {
         if (translationResult != null) {
@@ -204,6 +224,15 @@ fun AddWordDialog(
                         }
                     })
                 )
+
+                if (detectedLanguageName != null) {
+                    Text(
+                        text = "🌐 Algılanan Dil: $detectedLanguageName",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.padding(start = 4.dp)
+                    )
+                }
 
                 if (baseFormInfo != null) {
                     Surface(

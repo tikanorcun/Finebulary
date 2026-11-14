@@ -81,7 +81,8 @@ object TranslationManager {
     suspend fun translate(
         text: String,
         sourceLangCode: String,
-        targetLangCode: String
+        targetLangCode: String,
+        provider: String = "GOOGLE"
     ): String? {
         // If source/target language are the same (Monolingual L2 -> L2 learning), return definition & synonyms instead of translating
         if (sourceLangCode.lowercase() == targetLangCode.lowercase()) {
@@ -96,14 +97,20 @@ object TranslationManager {
             }
         }
 
-        // Try Google Translate first (Very fast, no limits)
-        val googleResult = googleTranslate(text, sourceLangCode, targetLangCode)
-        if (!googleResult.isNullOrBlank()) {
-            return googleResult
+        return when (provider.uppercase()) {
+            "MYMEMORY" -> {
+                val memResult = myMemoryTranslate(text, sourceLangCode, targetLangCode)
+                if (!memResult.isNullOrBlank()) memResult else googleTranslate(text, sourceLangCode, targetLangCode)
+            }
+            "AI" -> {
+                val googleResult = googleTranslate(text, sourceLangCode, targetLangCode)
+                if (!googleResult.isNullOrBlank()) googleResult else myMemoryTranslate(text, sourceLangCode, targetLangCode)
+            }
+            else -> {
+                val googleResult = googleTranslate(text, sourceLangCode, targetLangCode)
+                if (!googleResult.isNullOrBlank()) googleResult else myMemoryTranslate(text, sourceLangCode, targetLangCode)
+            }
         }
-
-        // Fallback to MyMemory if Google fails
-        return myMemoryTranslate(text, sourceLangCode, targetLangCode)
     }
 
     private suspend fun googleTranslate(text: String, sl: String, tl: String): String? {

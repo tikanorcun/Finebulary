@@ -250,6 +250,12 @@
     <string name="base_form_label">Kelime Kökü: %1$s</string>
     <string name="root_word_label">Düzeltme: %1$s</string>
 
+    <!-- Changelog v2.3.2 -->
+    <string name="changelog_v2_3_2_title">Hotfix 2.3.2 - Akıllı Dil Algılama ve Önbellekleme</string>
+    <string name="changelog_v2_3_2_item_1">Yazılan kelimelerin dilini anlık olarak otomatik algılayan Google ML Kit Language Identification entegre edildi</string>
+    <string name="changelog_v2_3_2_item_2">Hızlı ve çevrimdışı aramalar için Room veritabanı tabanlı çeviri önbellekleme (caching) altyapısı kuruldu</string>
+    <string name="changelog_v2_3_2_item_3">Ayarlara tercih edilen çeviri servisini seçme imkanı eklendi (Google Translate, MyMemory API veya Yapay Zeka)</string>
+
     <!-- Changelog v2.3.1 -->
     <string name="changelog_v2_3_1_title">Hotfix 2.3.1 - Örnek Cümle Çeviri Düzeltmesi</string>
     <string name="changelog_v2_3_1_item_1">Kelime ekleme arayüzünde örnek cümle çevirisine basıldığında ana kelime anlamının silinmesine ve verilerin kaybolmasına neden olan hata giderildi</string>
@@ -408,4 +414,9 @@
     <string name="import_course">Dosyadan Kurs İçe Aktar</string>
     <string name="course_imported_success">Kurs başarıyla içe aktarıldı!</string>
     <string name="course_imported_error">Kurs dosyası içe aktarılamadı.</string>
+    <string name="translation_service_title">Çeviri Servisi</string>
+    <string name="translation_service_desc">Kelime çevirileri ve oluşturma işlemleri için tercih ettiğiniz motoru seçin.</string>
+    <string name="translation_google">Google Translate (Hızlı ve Ücretsiz)</string>
+    <string name="translation_mymemory">MyMemory API (Alternatif Servis)</string>
+    <string name="translation_ai">Yapay Zeka Destekli Çeviri</string>
 </resources>

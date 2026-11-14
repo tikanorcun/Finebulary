@@ -252,6 +252,12 @@
     <string name="base_form_label">Base Form: %1$s</string>
     <string name="root_word_label">Root Word: %1$s</string>
 
+    <!-- Changelog v2.3.2 -->
+    <string name="changelog_v2_3_2_title">Hotfix 2.3.2 - Smart Language Auto-Detect &amp; Caching</string>
+    <string name="changelog_v2_3_2_item_1">Integrated Google ML Kit Language Identification for real-time auto-detecting typed word languages</string>
+    <string name="changelog_v2_3_2_item_2">Added Room database translation caching for instant offline/cached lookups</string>
+    <string name="changelog_v2_3_2_item_3">Added Translation Service selector in Settings (Google Translate, MyMemory API, or AI-Powered)</string>
+
     <!-- Changelog v2.3.1 -->
     <string name="changelog_v2_3_1_title">Hotfix 2.3.1 - Example Sentence Translation Bugfix</string>
     <string name="changelog_v2_3_1_item_1">Fixed an issue where translating example sentences in the word addition dialog wiped out form data and replaced the main word meaning</string>
@@ -410,4 +416,9 @@
     <string name="import_course">Import Course File</string>
     <string name="course_imported_success">Course imported successfully!</string>
     <string name="course_imported_error">Failed to import course file.</string>
+    <string name="translation_service_title">Translation Service</string>
+    <string name="translation_service_desc">Choose your preferred translation engine for vocabulary generation.</string>
+    <string name="translation_google">Google Translate (Fast &amp; Free)</string>
+    <string name="translation_mymemory">MyMemory API (Alternative)</string>
+    <string name="translation_ai">AI-Powered Translation</string>
 </resources>

@@ -11,8 +11,8 @@ import com.language.finebulary.data.dao.VocabularyDao
 import com.language.finebulary.data.model.*
 
 @Database(
-    entities = [Course::class, Word::class, ReviewState::class, DailyProgress::class, IeltsPassageEntity::class],
-    version = 14,
+    entities = [Course::class, Word::class, ReviewState::class, DailyProgress::class, IeltsPassageEntity::class, TranslationCacheEntity::class],
+    version = 15,
     exportSchema = false
 )
 @TypeConverters(IeltsConverters::class)
@@ -76,6 +76,23 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
+        private val MIGRATION_14_15 = object : Migration(14, 15) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("""
+                    CREATE TABLE IF NOT EXISTS translation_cache (
+                        queryText TEXT NOT NULL,
+                        sourceLang TEXT NOT NULL,
+                        targetLang TEXT NOT NULL,
+                        translation TEXT NOT NULL,
+                        definition TEXT,
+                        synonyms TEXT,
+                        timestamp INTEGER NOT NULL,
+                        PRIMARY KEY(queryText, sourceLang, targetLang)
+                    )
+                """.trimIndent())
+            }
+        }
+
         fun getDatabase(context: Context): AppDatabase {
             return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
@@ -87,7 +104,7 @@ abstract class AppDatabase : RoomDatabase() {
                         MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5,
                         MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8, MIGRATION_8_9,
                         MIGRATION_9_10, MIGRATION_10_11, MIGRATION_11_12, MIGRATION_12_13,
-                        MIGRATION_13_14
+                        MIGRATION_13_14, MIGRATION_14_15
                     )
                     .fallbackToDestructiveMigrationOnDowngrade()
                     .build()

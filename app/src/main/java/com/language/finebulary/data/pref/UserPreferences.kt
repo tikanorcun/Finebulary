@@ -51,6 +51,7 @@ class UserPreferences(private val context: Context) {
     private val APP_LANGUAGE_KEY = stringPreferencesKey("app_language")
     private val FOLDER_VIEW_STYLE_KEY = stringPreferencesKey("folder_view_style")
     private val HAS_SEEN_APP_TUTORIAL_KEY = booleanPreferencesKey("has_seen_app_tutorial")
+    private val TRANSLATION_PROVIDER_KEY = stringPreferencesKey("translation_provider")
     
     private val SOUND_ENABLED_KEY = booleanPreferencesKey("sound_enabled")
     private val HAPTIC_ENABLED_KEY = booleanPreferencesKey("haptic_enabled")
@@ -106,6 +107,7 @@ class UserPreferences(private val context: Context) {
         try { FolderViewStyle.valueOf(p[FOLDER_VIEW_STYLE_KEY] ?: FolderViewStyle.GRID.name) } catch (e: Exception) { FolderViewStyle.GRID }
     }
     val hasSeenAppTutorial: Flow<Boolean> = context.dataStore.data.map { it[HAS_SEEN_APP_TUTORIAL_KEY] ?: false }
+    val translationProvider: Flow<String> = context.dataStore.data.map { it[TRANSLATION_PROVIDER_KEY] ?: "GOOGLE" }
     val soundEnabled: Flow<Boolean> = context.dataStore.data.map { it[SOUND_ENABLED_KEY] ?: true }
     val hapticEnabled: Flow<Boolean> = context.dataStore.data.map { it[HAPTIC_ENABLED_KEY] ?: true }
     val exampleSentenceSource: Flow<String> = context.dataStore.data.map { it[EXAMPLE_SENTENCE_SOURCE_KEY] ?: "WIKTIONARY" }
@@ -172,5 +174,6 @@ class UserPreferences(private val context: Context) {
     }
     suspend fun setFolderViewStyle(style: FolderViewStyle) { context.dataStore.edit { it[FOLDER_VIEW_STYLE_KEY] = style.name } }
     suspend fun setHasSeenAppTutorial(seen: Boolean) { context.dataStore.edit { it[HAS_SEEN_APP_TUTORIAL_KEY] = seen } }
+    suspend fun setTranslationProvider(provider: String) { context.dataStore.edit { it[TRANSLATION_PROVIDER_KEY] = provider } }
     suspend fun clearAll() { context.dataStore.edit { it.clear() } }
 }

@@ -151,4 +151,10 @@ interface VocabularyDao {
         WHERE review_states.dueDateEpochMs <= :currentTime
     """)
     suspend fun getTotalDueWordsCount(currentTime: Long): Int
+
+    @Query("SELECT * FROM translation_cache WHERE queryText = :query AND sourceLang = :src AND targetLang = :tl LIMIT 1")
+    suspend fun getCachedTranslation(query: String, src: String, tl: String): com.language.finebulary.data.model.TranslationCacheEntity?
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertTranslationCache(cache: com.language.finebulary.data.model.TranslationCacheEntity)
 }

@@ -303,15 +303,16 @@ fun AddWordDialog(
                         )
                         if (exampleTranslation != null) {
                             Surface(
-                                color = MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.3f),
+                                color = MaterialTheme.colorScheme.surfaceVariant,
                                 shape = MaterialTheme.shapes.small,
                                 modifier = Modifier.fillMaxWidth().padding(top = 4.dp)
                             ) {
                                 Text(
                                     text = "Çeviri: $exampleTranslation",
                                     style = MaterialTheme.typography.bodySmall,
-                                    modifier = Modifier.padding(8.dp),
-                                    color = MaterialTheme.colorScheme.onTertiaryContainer
+                                    fontWeight = FontWeight.Medium,
+                                    modifier = Modifier.padding(12.dp),
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                             }
                         }

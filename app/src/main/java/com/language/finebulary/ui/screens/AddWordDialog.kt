@@ -9,7 +9,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DeleteSweep
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.Translate
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.*
@@ -31,6 +30,10 @@ import com.language.finebulary.data.model.Course
 import com.language.finebulary.ui.viewmodel.TranslationState
 import com.language.finebulary.util.RichWordDetails
 import com.language.finebulary.util.TtsManager
+import com.language.finebulary.util.TranslationManager
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @Composable
 fun AddWordDialog(
@@ -44,6 +47,7 @@ fun AddWordDialog(
     translationResult: RichWordDetails? = null,
 ) {
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
     val isMonolingual = course.targetLanguageCode.lowercase() == course.nativeLanguageCode.lowercase()
     
     var front by remember(initialFrontText, course) { mutableStateOf(initialFrontText ?: "") }
@@ -54,6 +58,9 @@ fun AddWordDialog(
     var example by remember(initialFrontText, course) { mutableStateOf<String?>(null) }
     var imageUrl by remember(initialFrontText, course) { mutableStateOf<String?>(null) }
     var baseFormInfo by remember(initialFrontText, course) { mutableStateOf<String?>(null) }
+
+    var exampleTranslation by remember { mutableStateOf<String?>(null) }
+    var isExampleTranslating by remember { mutableStateOf(false) }
 
     LaunchedEffect(translationResult) {
         if (translationResult != null) {
@@ -113,6 +120,7 @@ fun AddWordDialog(
                         example = null
                         imageUrl = null
                         baseFormInfo = null
+                        exampleTranslation = null
                     },
                 ) {
                     Icon(Icons.Default.DeleteSweep, contentDescription = stringResource(R.string.reset_fields), tint = MaterialTheme.colorScheme.secondary)
@@ -203,39 +211,22 @@ fun AddWordDialog(
                         shape = MaterialTheme.shapes.small,
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        Row(modifier = Modifier.padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
-                            Icon(Icons.Default.Info, null, modifier = Modifier.size(16.dp), tint = MaterialTheme.colorScheme.primary)
+                        Row(
+                            modifier = Modifier.padding(12.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(Icons.Default.Info, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(16.dp))
                             Spacer(Modifier.width(8.dp))
-                            
-                            val isCorrection = translationResult?.baseForm?.length == front.length
-                            val label = if (isCorrection) stringResource(R.string.root_word_label, baseFormInfo!!) 
-                                        else stringResource(R.string.base_form_label, baseFormInfo!!)
-                                        
                             Text(
-                                text = label,
-                                style = MaterialTheme.typography.labelMedium,
+                                text = stringResource(R.string.base_form_label, baseFormInfo!!),
+                                style = MaterialTheme.typography.bodySmall,
+                                fontWeight = FontWeight.Medium,
                                 color = MaterialTheme.colorScheme.onPrimaryContainer
                             )
                         }
                     }
                 }
 
-                translationResult?.suggestedCorrection?.let { suggestion ->
-                    SuggestionChip(
-                        onClick = {
-                            front = suggestion
-                            onTranslate(suggestion, course.targetLanguageCode, course.nativeLanguageCode)
-                        },
-                        label = { Text(stringResource(R.string.did_you_mean, suggestion)) },
-                        icon = { Icon(Icons.Default.AutoAwesome, null, modifier = Modifier.size(16.dp)) },
-                        colors = SuggestionChipDefaults.suggestionChipColors(
-                            containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.5f),
-                            labelColor = MaterialTheme.colorScheme.onSecondaryContainer
-                        ),
-                        border = null
-                    )
-                }
-                
                 if (!isMonolingual) {
                     OutlinedTextField(
                         value = back,
@@ -253,26 +244,49 @@ fun AddWordDialog(
                 }
 
                 if (exampleSentenceSource != "NONE") {
-                    OutlinedTextField(
-                        value = example ?: "",
-                        onValueChange = { example = it },
-                        label = { Text(stringResource(R.string.example_sentence)) },
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = MaterialTheme.shapes.small,
-                        trailingIcon = {
-                            if (isDictionaryLoading || isTranslating) {
-                                CircularProgressIndicator(modifier = Modifier.size(20.dp).padding(end = 12.dp), strokeWidth = 2.dp)
-                            } else {
-                                IconButton(onClick = {
-                                    if (!example.isNullOrBlank()) {
-                                        onTranslate(example!!, course.targetLanguageCode, course.nativeLanguageCode)
+                    Column(modifier = Modifier.fillMaxWidth()) {
+                        OutlinedTextField(
+                            value = example ?: "",
+                            onValueChange = { example = it },
+                            label = { Text(stringResource(R.string.example_sentence)) },
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = MaterialTheme.shapes.small,
+                            trailingIcon = {
+                                if (isExampleTranslating) {
+                                    CircularProgressIndicator(modifier = Modifier.size(20.dp).padding(end = 12.dp), strokeWidth = 2.dp)
+                                } else {
+                                    IconButton(onClick = {
+                                        if (!example.isNullOrBlank()) {
+                                            isExampleTranslating = true
+                                            scope.launch(Dispatchers.IO) {
+                                                val res = TranslationManager.translate(example!!, course.targetLanguageCode, course.nativeLanguageCode)
+                                                withContext(Dispatchers.Main) {
+                                                    exampleTranslation = res
+                                                    isExampleTranslating = false
+                                                }
+                                            }
+                                        }
+                                    }) {
+                                        Icon(Icons.Default.Translate, null, tint = MaterialTheme.colorScheme.tertiary)
                                     }
-                                }) {
-                                    Icon(Icons.Default.Translate, null, tint = MaterialTheme.colorScheme.tertiary)
                                 }
                             }
+                        )
+                        if (exampleTranslation != null) {
+                            Surface(
+                                color = MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.3f),
+                                shape = MaterialTheme.shapes.small,
+                                modifier = Modifier.fillMaxWidth().padding(top = 4.dp)
+                            ) {
+                                Text(
+                                    text = "Çeviri: $exampleTranslation",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    modifier = Modifier.padding(8.dp),
+                                    color = MaterialTheme.colorScheme.onTertiaryContainer
+                                )
+                            }
                         }
-                    )
+                    }
                 }
                 
                 if (isDictionaryLoading && definition.isNullOrBlank() && synonyms.isNullOrBlank() && antonyms.isNullOrBlank()) {
@@ -313,26 +327,24 @@ fun AddWordDialog(
         confirmButton = {
             Button(
                 onClick = {
-                    if (front.isNotBlank() && (back.isNotBlank() || isMonolingual)) {
-                        val finalBack = if (isMonolingual && back.isBlank()) {
-                            definition ?: synonyms?.split("|")?.first() ?: front
-                        } else {
-                            back
-                        }
-                        onConfirm(front, finalBack, definition, synonyms, antonyms, example, imageUrl)
-                    }
+                    onConfirm(
+                        front,
+                        back,
+                        definition,
+                        synonyms,
+                        antonyms,
+                        example,
+                        imageUrl
+                    )
                 },
-                shape = MaterialTheme.shapes.small,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                shape = MaterialTheme.shapes.medium
             ) {
-                Text(stringResource(R.string.save_word), fontWeight = FontWeight.Bold)
+                Text(stringResource(R.string.save), fontWeight = FontWeight.Bold)
             }
         },
         dismissButton = {
-            TextButton(
-                onClick = onDismiss,
-                modifier = Modifier.fillMaxWidth()
-            ) {
+            TextButton(onClick = onDismiss, modifier = Modifier.fillMaxWidth()) {
                 Text(stringResource(R.string.cancel))
             }
         }

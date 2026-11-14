@@ -252,6 +252,10 @@
     <string name="base_form_label">Base Form: %1$s</string>
     <string name="root_word_label">Root Word: %1$s</string>
 
+    <!-- Changelog v2.3.1 -->
+    <string name="changelog_v2_3_1_title">Hotfix 2.3.1 - Example Sentence Translation Bugfix</string>
+    <string name="changelog_v2_3_1_item_1">Fixed an issue where translating example sentences in the word addition dialog wiped out form data and replaced the main word meaning</string>
+
     <!-- Changelog v2.3 -->
     <string name="changelog_v2_3_title">Version 2.3 - P2P Course Sharing &amp; Word Duels</string>
     <string name="changelog_v2_3_item_1">Peer-to-Peer Course/Folder Sharing (.finebulary export &amp; import)</string>

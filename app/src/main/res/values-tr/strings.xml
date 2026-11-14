@@ -250,6 +250,10 @@
     <string name="base_form_label">Kelime Kökü: %1$s</string>
     <string name="root_word_label">Düzeltme: %1$s</string>
 
+    <!-- Changelog v2.3.1 -->
+    <string name="changelog_v2_3_1_title">Hotfix 2.3.1 - Örnek Cümle Çeviri Düzeltmesi</string>
+    <string name="changelog_v2_3_1_item_1">Kelime ekleme arayüzünde örnek cümle çevirisine basıldığında ana kelime anlamının silinmesine ve verilerin kaybolmasına neden olan hata giderildi</string>
+
     <!-- Changelog v2.3 -->
     <string name="changelog_v2_3_title">Sürüm 2.3 - Kurs Paylaşımı ve Kelime Düelloları</string>
     <string name="changelog_v2_3_item_1">Arkadaşlar arası P2P Kurs / Klasör Paylaşımı (.finebulary dışa ve içe aktarma)</string>

@@ -14,8 +14,8 @@ android {
         applicationId = "com.language.finebulary"
         minSdk = 24
         targetSdk = 34
-        versionCode = 24
-        versionName = "2.3"
+        versionCode = 25
+        versionName = "2.3.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {

@@ -252,6 +252,13 @@
     <string name="base_form_label">Base Form: %1$s</string>
     <string name="root_word_label">Root Word: %1$s</string>
 
+    <!-- Changelog v2.3.3 -->
+    <string name="changelog_v2_3_3_title">Version 2.3.3 - Security Hardening &amp; Performance</string>
+    <string name="changelog_v2_3_3_item_1">Enforced encrypted HTTPS connections for all network API calls</string>
+    <string name="changelog_v2_3_3_item_2">Secured sensitive API keys by excluding preference data from unencrypted cloud backups</string>
+    <string name="changelog_v2_3_3_item_3">Refactored Quick Add Overlay components to Hilt Dependency Injection for improved memory efficiency</string>
+    <string name="changelog_v2_3_3_item_4">Asynchronized TTS initialization and optimized background flows with repeatOnLifecycle</string>
+
     <!-- Changelog v2.3.2 -->
     <string name="changelog_v2_3_2_title">Hotfix 2.3.2 - Smart Language Auto-Detect &amp; Caching</string>
     <string name="changelog_v2_3_2_item_1">Integrated Google ML Kit Language Identification for real-time auto-detecting typed word languages</string>

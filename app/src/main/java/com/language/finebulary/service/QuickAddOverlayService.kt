@@ -30,26 +30,41 @@ import androidx.savedstate.SavedStateRegistryController
 import androidx.savedstate.SavedStateRegistryOwner
 import androidx.savedstate.setViewTreeSavedStateRegistryOwner
 import com.language.finebulary.R
-import com.language.finebulary.data.db.AppDatabase
+import com.language.finebulary.data.api.GeminiApiService
+import com.language.finebulary.data.api.OpenAiApiService
 import com.language.finebulary.data.model.Course
 import com.language.finebulary.data.model.CourseWithCount
+import com.language.finebulary.data.pref.UserPreferences
 import com.language.finebulary.repository.CourseRepository
 import com.language.finebulary.ui.components.getLanguageEmoji
 import com.language.finebulary.ui.screens.AddWordDialog
 import com.language.finebulary.ui.theme.FinebularyTheme
 import com.language.finebulary.ui.viewmodel.TranslationState
-import com.language.finebulary.util.TranslationManager
 import com.language.finebulary.util.ImageSearchManager
-import com.language.finebulary.data.pref.UserPreferences
-import com.language.finebulary.data.api.PexelsApiService
 import com.language.finebulary.util.RichWordDetails
+import com.language.finebulary.util.TranslationManager
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.first
-import okhttp3.OkHttpClient
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 
+@AndroidEntryPoint
 class QuickAddOverlayService : Service(), LifecycleOwner, SavedStateRegistryOwner {
+
+    @Inject
+    lateinit var repo: CourseRepository
+
+    @Inject
+    lateinit var prefs: UserPreferences
+
+    @Inject
+    lateinit var imageSearchManager: ImageSearchManager
+
+    @Inject
+    lateinit var geminiApi: GeminiApiService
+
+    @Inject
+    lateinit var openAiApi: OpenAiApiService
 
     private val lifecycleRegistry = LifecycleRegistry(this)
     private val savedStateRegistryController = SavedStateRegistryController.create(this)
@@ -117,21 +132,7 @@ class QuickAddOverlayService : Service(), LifecycleOwner, SavedStateRegistryOwne
                     var translationState by remember { mutableStateOf<TranslationState>(TranslationState.Idle) }
 
                     val context = LocalContext.current
-                    val db = remember { AppDatabase.getDatabase(context) }
-                    val repo = remember { CourseRepository(db.vocabularyDao()) }
-                    val prefs = remember { UserPreferences(context) }
                     val exampleSentenceSource by prefs.exampleSentenceSource.collectAsState(initial = "WIKTIONARY")
-
-                    val imageSearchManager = remember {
-                        val client = OkHttpClient.Builder().build()
-                        val pexelsApi = Retrofit.Builder()
-                            .baseUrl("https://api.pexels.com/")
-                            .client(client)
-                            .addConverterFactory(GsonConverterFactory.create())
-                            .build()
-                            .create(PexelsApiService::class.java)
-                        ImageSearchManager(pexelsApi)
-                    }
 
                     LaunchedEffect(Unit) {
                         serviceScope.launch(Dispatchers.IO) {
@@ -268,19 +269,6 @@ class QuickAddOverlayService : Service(), LifecycleOwner, SavedStateRegistryOwne
                     }
                     if (!apiKey.isNullOrBlank()) {
                         try {
-                            val client = OkHttpClient.Builder().build()
-                            val geminiApi = Retrofit.Builder()
-                                .baseUrl("https://generativelanguage.googleapis.com/")
-                                .client(client)
-                                .addConverterFactory(GsonConverterFactory.create())
-                                .build()
-                                .create(com.language.finebulary.data.api.GeminiApiService::class.java)
-                            val openAiApi = Retrofit.Builder()
-                                .baseUrl("https://api.openai.com/")
-                                .client(client)
-                                .addConverterFactory(GsonConverterFactory.create())
-                                .build()
-                                .create(com.language.finebulary.data.api.OpenAiApiService::class.java)
                             val providerRegistry = com.language.finebulary.util.ProviderRegistry(geminiApi, openAiApi)
                             val providerImpl = providerRegistry.getProvider(aiProviderEnum, prefs.showLegacyModels.first())
                             providerImpl.generateWordDetails(apiKey, model, text, course.targetLanguageCode, course.nativeLanguageCode)

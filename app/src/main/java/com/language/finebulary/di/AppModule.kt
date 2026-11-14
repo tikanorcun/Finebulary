@@ -9,6 +9,7 @@ import com.language.finebulary.data.db.AppDatabase
 import com.language.finebulary.data.dao.VocabularyDao
 import com.language.finebulary.data.pref.UserPreferences
 import com.language.finebulary.repository.CourseRepository
+import com.language.finebulary.util.ImageSearchManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -72,6 +73,12 @@ object AppModule {
             .addConverterFactory(retrofit2.converter.gson.GsonConverterFactory.create())
             .build()
             .create(com.language.finebulary.data.api.PexelsApiService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideImageSearchManager(pexelsApiService: PexelsApiService): ImageSearchManager {
+        return ImageSearchManager(pexelsApiService)
     }
 
     @Provides

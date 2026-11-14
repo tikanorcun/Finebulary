@@ -33,7 +33,9 @@ import androidx.core.content.ContextCompat
 import androidx.core.os.LocaleListCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -54,6 +56,7 @@ import com.language.finebulary.util.SoundManager
 import com.language.finebulary.util.TtsManager
 import com.language.finebulary.worker.ReminderWorker
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 
@@ -77,7 +80,7 @@ class MainActivity : AppCompatActivity() {
             !homeViewModel.isInitialized.value
         }
 
-        lifecycleScope.launch {
+        lifecycleScope.launch(Dispatchers.IO) {
             val engine = homeViewModel.deviceTtsEngine.value
             TtsManager.init(applicationContext, engine)
             SoundManager.init()
@@ -88,21 +91,23 @@ class MainActivity : AppCompatActivity() {
         requestNotificationPermission()
 
         lifecycleScope.launch {
-            combine(
-                homeViewModel.remindersEnabled,
-                homeViewModel.dailyNotificationCount,
-                homeViewModel.reminderStartHour,
-                homeViewModel.reminderEndHour
-            ) { enabled, count, startH, endH -> 
-                ReminderConfig(enabled, count, startH, endH)
-            }
-                .collect { config ->
-                    if (config.enabled) {
-                        scheduleDailyReminder(config.count, config.startHour, config.endHour)
-                    } else {
-                        WorkManager.getInstance(applicationContext).cancelUniqueWork("daily_reminder")
-                    }
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                combine(
+                    homeViewModel.remindersEnabled,
+                    homeViewModel.dailyNotificationCount,
+                    homeViewModel.reminderStartHour,
+                    homeViewModel.reminderEndHour
+                ) { enabled, count, startH, endH -> 
+                    ReminderConfig(enabled, count, startH, endH)
                 }
+                    .collect { config ->
+                        if (config.enabled) {
+                            scheduleDailyReminder(config.count, config.startHour, config.endHour)
+                        } else {
+                            WorkManager.getInstance(applicationContext).cancelUniqueWork("daily_reminder")
+                        }
+                    }
+            }
         }
         
         setContent {

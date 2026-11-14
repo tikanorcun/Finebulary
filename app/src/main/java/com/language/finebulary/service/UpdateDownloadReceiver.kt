@@ -25,7 +25,8 @@ class UpdateDownloadReceiver : BroadcastReceiver() {
                             if (uriString != null) {
                                 val uri = uriString.toUri()
                                 val file = uri.path?.let { File(it) }
-                                if (file != null && file.exists()) {
+                                // Security check: Ensure file exists and is a Finebulary APK download
+                                if (file != null && file.exists() && file.name.endsWith(".apk", ignoreCase = true)) {
                                     val apkUri = FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", file)
 
                                     val installIntent = Intent(Intent.ACTION_VIEW).apply {

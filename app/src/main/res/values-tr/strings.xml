@@ -250,6 +250,13 @@
     <string name="base_form_label">Kelime Kökü: %1$s</string>
     <string name="root_word_label">Düzeltme: %1$s</string>
 
+    <!-- Changelog v2.3.3 -->
+    <string name="changelog_v2_3_3_title">Sürüm 2.3.3 - Güvenlik Sertleştirmeleri ve Performans</string>
+    <string name="changelog_v2_3_3_item_1">Tüm ağ API çağrılarında şifreli HTTPS kullanımı zorunlu hale getirildi</string>
+    <string name="changelog_v2_3_3_item_2">API anahtarları ve hassas veriler bulut yedeklemelerinden dışlanarak koruma altına alındı</string>
+    <string name="changelog_v2_3_3_item_3">Hızlı Kelime Ekleme (Quick Add) penceresi Hilt DI mimarisine geçirilerek bellek kullanımı optimize edildi</string>
+    <string name="changelog_v2_3_3_item_4">Açılışta TTS ilklendirmeleri asenkron hale getirildi ve arka plan coroutine dinlemeleri optimize edildi</string>
+
     <!-- Changelog v2.3.2 -->
     <string name="changelog_v2_3_2_title">Hotfix 2.3.2 - Akıllı Dil Algılama ve Önbellekleme</string>
     <string name="changelog_v2_3_2_item_1">Yazılan kelimelerin dilini anlık olarak otomatik algılayan Google ML Kit Language Identification entegre edildi</string>

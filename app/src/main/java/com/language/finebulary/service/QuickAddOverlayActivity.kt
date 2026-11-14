@@ -20,7 +20,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.google.mlkit.nl.languageid.LanguageIdentification
 import com.language.finebulary.R
-import com.language.finebulary.data.db.AppDatabase
 import com.language.finebulary.data.model.Course
 import com.language.finebulary.data.model.CourseWithCount
 import com.language.finebulary.data.model.supportedLanguages
@@ -41,12 +40,29 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.suspendCancellableCoroutine
-import okhttp3.OkHttpClient
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import com.language.finebulary.data.api.GeminiApiService
+import com.language.finebulary.data.api.OpenAiApiService
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 import kotlin.coroutines.resume
 
+@AndroidEntryPoint
 class QuickAddOverlayActivity : ComponentActivity() {
+
+    @Inject
+    lateinit var repo: CourseRepository
+
+    @Inject
+    lateinit var prefs: UserPreferences
+
+    @Inject
+    lateinit var imageSearchManager: ImageSearchManager
+
+    @Inject
+    lateinit var geminiApi: GeminiApiService
+
+    @Inject
+    lateinit var openAiApi: OpenAiApiService
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,21 +85,7 @@ class QuickAddOverlayActivity : ComponentActivity() {
 
                 val coroutineScope = rememberCoroutineScope()
                 val context = LocalContext.current
-                val db = remember { AppDatabase.getDatabase(context) }
-                val repo = remember { CourseRepository(db.vocabularyDao()) }
-                val prefs = remember { UserPreferences(context) }
                 val exampleSentenceSource by prefs.exampleSentenceSource.collectAsState(initial = "WIKTIONARY")
-
-                val imageSearchManager = remember {
-                    val client = OkHttpClient.Builder().build()
-                    val pexelsApi = Retrofit.Builder()
-                        .baseUrl("https://api.pexels.com/")
-                        .client(client)
-                        .addConverterFactory(GsonConverterFactory.create())
-                        .build()
-                        .create(PexelsApiService::class.java)
-                    ImageSearchManager(pexelsApi)
-                }
 
                 LaunchedEffect(Unit) {
                     coroutineScope.launch(Dispatchers.IO) {
@@ -301,19 +303,6 @@ class QuickAddOverlayActivity : ComponentActivity() {
                     }
                     if (!apiKey.isNullOrBlank()) {
                         try {
-                            val client = OkHttpClient.Builder().build()
-                            val geminiApi = Retrofit.Builder()
-                                .baseUrl("https://generativelanguage.googleapis.com/")
-                                .client(client)
-                                .addConverterFactory(GsonConverterFactory.create())
-                                .build()
-                                .create(com.language.finebulary.data.api.GeminiApiService::class.java)
-                            val openAiApi = Retrofit.Builder()
-                                .baseUrl("https://api.openai.com/")
-                                .client(client)
-                                .addConverterFactory(GsonConverterFactory.create())
-                                .build()
-                                .create(com.language.finebulary.data.api.OpenAiApiService::class.java)
                             val providerRegistry = com.language.finebulary.util.ProviderRegistry(geminiApi, openAiApi)
                             val providerImpl = providerRegistry.getProvider(aiProviderEnum, prefs.showLegacyModels.first())
                             providerImpl.generateWordDetails(apiKey, model, text, course.targetLanguageCode, course.nativeLanguageCode)

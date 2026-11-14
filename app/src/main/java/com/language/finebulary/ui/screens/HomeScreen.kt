@@ -142,7 +142,7 @@ fun HomeScreen(
             TopAppBar(
                 title = { Text(title, fontWeight = FontWeight.Bold) },
                 actions = {
-                    IconButton(onClick = { filePickerLauncher.launch("application/json") }) {
+                    IconButton(onClick = { filePickerLauncher.launch("*/*") }) {
                         Icon(Icons.Default.FileOpen, contentDescription = stringResource(R.string.import_course))
                     }
                     IconButton(onClick = {

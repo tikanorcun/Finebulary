@@ -258,6 +258,7 @@
     <string name="changelog_v2_3_3_item_2">Secured sensitive API keys by excluding preference data from unencrypted cloud backups</string>
     <string name="changelog_v2_3_3_item_3">Refactored Quick Add Overlay components to Hilt Dependency Injection for improved memory efficiency</string>
     <string name="changelog_v2_3_3_item_4">Asynchronized TTS initialization and optimized background flows with repeatOnLifecycle</string>
+    <string name="changelog_v2_3_3_item_5">Fixed an issue where shared .finebulary course files could not be imported due to MIME type filtering and primary key ID conflicts</string>
 
     <!-- Changelog v2.3.2 -->
     <string name="changelog_v2_3_2_title">Hotfix 2.3.2 - Smart Language Auto-Detect &amp; Caching</string>

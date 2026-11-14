@@ -499,11 +499,40 @@ class HomeViewModel @Inject constructor(
     }
     fun importSharedCourse(json: String, onResult: (Boolean) -> Unit) {
         viewModelScope.launch {
-            val data = BackupManager.parseBackupJson(json)
-            if (data != null && !data.courses.isNullOrEmpty() && !data.words.isNullOrEmpty()) {
-                repository.importFullData(data.courses, data.words, data.reviewStates ?: emptyList())
-                onResult(true)
-            } else {
+            try {
+                val data = BackupManager.parseBackupJson(json)
+                if (data != null && !data.courses.isNullOrEmpty()) {
+                    val courses = data.courses
+                    val words = data.words ?: emptyList()
+                    val reviewStates = data.reviewStates ?: emptyList()
+
+                    for (course in courses) {
+                        val oldCourseId = course.id
+                        val newCourse = course.copy(id = 0)
+                        val newCourseId = repository.addCourseObject(newCourse)
+                        val courseWords = words.filter { it.courseId == oldCourseId }.map { word ->
+                            word.copy(id = 0, courseId = newCourseId)
+                        }
+                        if (courseWords.isNotEmpty()) {
+                            val insertedWordIds = repository.insertWordsReturnIds(courseWords)
+                            for (i in courseWords.indices) {
+                                val oldWord = words.filter { it.courseId == oldCourseId }.getOrNull(i)
+                                if (oldWord != null) {
+                                    val newWordId = insertedWordIds.getOrNull(i) ?: 0L
+                                    val state = reviewStates.find { it.wordId == oldWord.id }
+                                    if (state != null && newWordId != 0L) {
+                                        repository.insertReviewState(state.copy(wordId = newWordId))
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    onResult(true)
+                } else {
+                    onResult(false)
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
                 onResult(false)
             }
         }

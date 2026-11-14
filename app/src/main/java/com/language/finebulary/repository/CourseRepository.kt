@@ -105,6 +105,9 @@ class CourseRepository(private val vocabularyDao: VocabularyDao) {
         vocabularyDao.insertReviewStates(states)
     }
 
+    suspend fun insertWordsReturnIds(words: List<Word>): List<Long> = vocabularyDao.insertWords(words)
+    suspend fun insertReviewState(state: ReviewState) = vocabularyDao.insertReviewState(state)
+
     suspend fun getOrCreateCourse(name: String): Long {
         val existing = vocabularyDao.getCourseByName(name)
         return existing?.id ?: vocabularyDao.insertCourse(Course(name = name))

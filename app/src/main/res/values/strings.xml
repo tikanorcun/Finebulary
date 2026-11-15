@@ -252,11 +252,11 @@
     <string name="base_form_label">Base Form: %1$s</string>
     <string name="root_word_label">Root Word: %1$s</string>
 
-    <!-- Changelog v2.3.6 Beta 1 -->
-    <string name="changelog_v2_3_6_beta1_title">Version 2.3.6 Beta 1 - Frozen Snapshot Duel &amp; Co-op Testing</string>
-    <string name="changelog_v2_3_6_beta1_item_1">Introduced Self-Contained Frozen Snapshot Duel Packets for 100% fair duels.</string>
-    <string name="changelog_v2_3_6_beta1_item_2">Added instant side-by-side QR Code scanning and challenge link sharing.</string>
-    <string name="changelog_v2_3_6_beta1_item_3">Added optional post-duel folder saving and interactive TTS &amp; sound feedback.</string>
+    <!-- Changelog v2.3.6 -->
+    <string name="changelog_v2_3_6_title">Version 2.3.6 - Frozen Snapshot Duel &amp; Co-op Mode</string>
+    <string name="changelog_v2_3_6_item_1">Introduced Self-Contained Frozen Snapshot Duel Packets for 100% fair duels</string>
+    <string name="changelog_v2_3_6_item_2">Added instant side-by-side QR Code scanning and challenge link sharing</string>
+    <string name="changelog_v2_3_6_item_3">Added optional post-duel folder saving and interactive TTS &amp; sound feedback</string>
 
     <!-- Changelog v2.3.5 -->
     <string name="changelog_v2_3_5_title">Version 2.3.5 - Move Words &amp; File Association Support</string>

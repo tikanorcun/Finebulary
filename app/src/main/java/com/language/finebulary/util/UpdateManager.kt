@@ -20,7 +20,12 @@ class UpdateManager @Inject constructor(
     suspend fun checkForUpdate(): GitHubRelease? {
         return try {
             val release = withContext(Dispatchers.IO) {
-                gitHubApiService.getLatestRelease()
+                val releases = try {
+                    gitHubApiService.getAllReleases()
+                } catch (e: Exception) {
+                    null
+                }
+                releases?.firstOrNull() ?: gitHubApiService.getLatestRelease()
             }
             val remoteVersion = release.tagName.removePrefix("v").trim()
             val currentVersion = BuildConfig.VERSION_NAME.removePrefix("v").trim()
@@ -36,10 +41,15 @@ class UpdateManager @Inject constructor(
         }
     }
 
+    private fun parseVersionParts(version: String): List<Int> {
+        val clean = version.substringBefore("-").trim()
+        return clean.split(".").mapNotNull { it.toIntOrNull() }
+    }
+
     private fun isNewerVersion(remote: String, current: String): Boolean {
         return try {
-            val remoteParts = remote.split(".").map { it.toIntOrNull() ?: 0 }
-            val currentParts = current.split(".").map { it.toIntOrNull() ?: 0 }
+            val remoteParts = parseVersionParts(remote)
+            val currentParts = parseVersionParts(current)
 
             val maxLen = maxOf(remoteParts.size, currentParts.size)
             for (i in 0 until maxLen) {
@@ -48,7 +58,7 @@ class UpdateManager @Inject constructor(
                 if (r > c) return true
                 if (r < c) return false
             }
-            false
+            remote != current
         } catch (_: Exception) {
             remote != current
         }

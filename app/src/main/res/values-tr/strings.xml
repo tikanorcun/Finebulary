@@ -250,11 +250,11 @@
     <string name="base_form_label">Kelime Kökü: %1$s</string>
     <string name="root_word_label">Düzeltme: %1$s</string>
 
-    <!-- Changelog v2.3.6 Beta 1 -->
-    <string name="changelog_v2_3_6_beta1_title">Sürüm 2.3.6 Beta 1 - Dondurulmuş Paketli Düello &amp; Ortak Çalışma Testi</string>
-    <string name="changelog_v2_3_6_beta1_item_1">Kullanıcıların kelime değişikliklerinden etkilenmeyen %100 adil dondurulmuş meydan okuma paketleri eklendi.</string>
-    <string name="changelog_v2_3_6_beta1_item_2">Yan yanayken saniyeler içinde eşleşmek için QR kod taraması ve meydan okuma linki paylaşımı getirildi.</string>
-    <string name="changelog_v2_3_6_beta1_item_3">Düello sonrası opsiyonel klasör kaydetme, TTS seslendirme ve haptik/sesli geri bildirimler eklendi.</string>
+    <!-- Changelog v2.3.6 -->
+    <string name="changelog_v2_3_6_title">Sürüm 2.3.6 - Dondurulmuş Paketli Düello &amp; Ortak Çalışma Modu</string>
+    <string name="changelog_v2_3_6_item_1">Kullanıcıların kelime değişikliklerinden etkilenmeyen %100 adil dondurulmuş meydan okuma paketleri eklendi</string>
+    <string name="changelog_v2_3_6_item_2">Yan yanayken saniyeler içinde eşleşmek için QR kod taraması ve meydan okuma linki paylaşımı getirildi</string>
+    <string name="changelog_v2_3_6_item_3">Düello sonrası opsiyonel klasör kaydetme, TTS seslendirme ve haptik/sesli geri bildirimler eklendi</string>
 
     <!-- Changelog v2.3.5 -->
     <string name="changelog_v2_3_5_title">Sürüm 2.3.5 - Kelime Taşıma &amp; Dosya Açma Desteği</string>

@@ -23,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import android.content.Intent
+import android.widget.Toast
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -40,6 +41,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.material.icons.automirrored.filled.VolumeUp
+import androidx.compose.material.icons.automirrored.filled.DriveFileMove
 import coil.compose.AsyncImage
 import kotlinx.coroutines.delay
 
@@ -61,6 +63,8 @@ fun CourseDetailsScreen(
     var showMoreMenu by remember { mutableStateOf(false) }
     var showDeleteConfirm by remember { mutableStateOf(false) }
     var showMicroStoryDialog by remember { mutableStateOf(false) }
+    var showMoveDialog by remember { mutableStateOf(false) }
+    var wordsToMove by remember { mutableStateOf<List<Word>>(emptyList()) }
     val reviewState by viewModel.selectedWordReviewState.collectAsState()
     
     // Pagination State
@@ -95,6 +99,11 @@ fun CourseDetailsScreen(
             reviewState = reviewState,
             onEdit = {
                 wordToEdit = selectedWordForDetails
+                selectedWordForDetails = null
+            },
+            onMove = {
+                wordsToMove = listOf(selectedWordForDetails!!)
+                showMoveDialog = true
                 selectedWordForDetails = null
             },
             onDismiss = {
@@ -202,6 +211,19 @@ fun CourseDetailsScreen(
                             }
                         }) {
                             Icon(Icons.Default.AutoAwesome, contentDescription = "AI Hikaye Üret", tint = MaterialTheme.colorScheme.primary)
+                        }
+                        IconButton(onClick = {
+                            val selectedList = words.filter { it.id in selectedWordIds }
+                            if (selectedList.isNotEmpty()) {
+                                wordsToMove = selectedList
+                                showMoveDialog = true
+                            }
+                        }) {
+                            Icon(
+                                Icons.AutoMirrored.Filled.DriveFileMove,
+                                contentDescription = stringResource(R.string.move_to_folder),
+                                tint = MaterialTheme.colorScheme.primary
+                            )
                         }
                         IconButton(onClick = {
                             if (selectedWordIds.size == words.size) {
@@ -462,6 +484,31 @@ fun CourseDetailsScreen(
                 TextButton(onClick = { showDeleteConfirm = false }) {
                     Text(stringResource(R.string.cancel))
                 }
+            }
+        )
+    }
+
+    if (showMoveDialog && wordsToMove.isNotEmpty()) {
+        MoveWordsDialog(
+            wordsToMove = wordsToMove,
+            currentCourseId = course.id,
+            viewModel = viewModel,
+            onDismiss = {
+                showMoveDialog = false
+                wordsToMove = emptyList()
+            },
+            onConfirm = { targetCourse ->
+                val countMoved = wordsToMove.size
+                val targetName = targetCourse.name
+                viewModel.moveWordsToCourse(wordsToMove, targetCourse.id)
+                showMoveDialog = false
+                wordsToMove = emptyList()
+                selectedWordIds = emptySet()
+                Toast.makeText(
+                    context,
+                    context.getString(R.string.words_moved_success, countMoved, targetName),
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         )
     }

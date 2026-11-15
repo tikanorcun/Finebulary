@@ -252,6 +252,11 @@
     <string name="base_form_label">Base Form: %1$s</string>
     <string name="root_word_label">Root Word: %1$s</string>
 
+    <!-- Changelog v2.3.5 -->
+    <string name="changelog_v2_3_5_title">Version 2.3.5 - Move Words &amp; File Association Support</string>
+    <string name="changelog_v2_3_5_item_1">Added support for moving words between folders/courses individually or in bulk with a new folder selector dialog</string>
+    <string name="changelog_v2_3_5_item_2">Added system file association for .finebulary files so tapping course files in external apps opens Finebulary directly and auto-imports them</string>
+
     <!-- Changelog v2.3.4 -->
     <string name="changelog_v2_3_4_title">Version 2.3.4 - AI Stories, Karaoke Reader &amp; Gamification</string>
     <string name="changelog_v2_3_4_item_1">Added AI Micro-Story Generator: Create short 3-sentence stories for selected vocabulary with bold keywords and translations</string>
@@ -469,4 +474,12 @@
     <string name="challenge_share_title">Challenge Friend</string>
     <string name="word_already_exists">This word already exists in this folder!</string>
     <string name="close">Close</string>
+    <string name="move_to_folder">Move to Folder</string>
+    <string name="select_destination_folder">Select Destination Folder</string>
+    <string name="move_words_title">Move Words</string>
+    <string name="move_confirm">Move</string>
+    <string name="move_words_count_fmt">%1$d word(s) will be moved</string>
+    <string name="no_folders_available">No other folders available</string>
+    <string name="current_folder">Current Folder</string>
+    <string name="words_moved_success">Moved %1$d word(s) to %2$s</string>
 </resources>

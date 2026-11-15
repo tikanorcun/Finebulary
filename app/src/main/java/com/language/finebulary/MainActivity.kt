@@ -3,6 +3,7 @@ package com.language.finebulary
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
@@ -534,6 +535,41 @@ class MainActivity : AppCompatActivity() {
 
     private fun handleIntent(intent: Intent?) {
         if (intent == null) return
+
+        // Process incoming .finebulary file if opened or shared
+        val uri: Uri? = when (intent.action) {
+            Intent.ACTION_VIEW -> intent.data
+            Intent.ACTION_SEND -> {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    intent.getParcelableExtra(Intent.EXTRA_STREAM, Uri::class.java)
+                } else {
+                    @Suppress("DEPRECATION")
+                    intent.getParcelableExtra(Intent.EXTRA_STREAM) as? Uri
+                } ?: intent.clipData?.getItemAt(0)?.uri ?: intent.data
+            }
+            else -> intent.data
+        }
+
+        if (uri != null) {
+            try {
+                val inputStream = contentResolver.openInputStream(uri)
+                val json = inputStream?.bufferedReader().use { it?.readText() }
+                if (!json.isNullOrBlank()) {
+                    homeViewModel.importSharedCourse(json) { success ->
+                        if (success) {
+                            Toast.makeText(this, getString(R.string.course_imported_success), Toast.LENGTH_SHORT).show()
+                        } else {
+                            Toast.makeText(this, getString(R.string.course_imported_error), Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                    intent.data = null
+                    intent.removeExtra(Intent.EXTRA_STREAM)
+                }
+            } catch (_: Exception) {
+                // Not a valid file URI, ignore
+            }
+        }
+
         val showOverlay = intent.getBooleanExtra("SHOW_WORD_OVERLAY", false)
         val wordId = intent.getLongExtra("WORD_ID", -1L)
         if (showOverlay && wordId != -1L) {
@@ -541,7 +577,9 @@ class MainActivity : AppCompatActivity() {
         }
 
         val text = when (intent.action) {
-            Intent.ACTION_SEND -> intent.getStringExtra(Intent.EXTRA_TEXT)
+            Intent.ACTION_SEND -> {
+                if (uri == null) intent.getStringExtra(Intent.EXTRA_TEXT) else null
+            }
             Intent.ACTION_PROCESS_TEXT -> intent.getCharSequenceExtra(Intent.EXTRA_PROCESS_TEXT)?.toString()
             else -> null
         }

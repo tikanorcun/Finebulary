@@ -482,6 +482,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    val allCoursesWithCount: Flow<List<com.language.finebulary.data.model.CourseWithCount>> = repository.allCoursesWithCount
     fun getWordsForCourse(courseId: Long) = repository.getWordsForCourse(courseId)
     suspend fun getAllWordsRaw() = repository.getAllWordsRaw()
     fun deleteCourse(course: Course) = viewModelScope.launch { repository.deleteCourse(course) }
@@ -490,6 +491,11 @@ class HomeViewModel @Inject constructor(
     fun clearSelectedWord() { _selectedWordReviewState.value = null }
     fun deleteWord(word: Word) = viewModelScope.launch { repository.deleteWord(word); if (_selectedWordReviewState.value?.wordId == word.id) clearSelectedWord() }
     fun deleteWordsBatch(words: List<Word>) = viewModelScope.launch { repository.deleteWords(words) }
+    fun moveWordsToCourse(words: List<Word>, targetCourseId: Long) = viewModelScope.launch {
+        if (words.isNotEmpty()) {
+            repository.moveWordsToCourse(words.map { it.id }, targetCourseId)
+        }
+    }
     fun addManualWord(courseId: Long, front: String, back: String, definition: String? = null, synonyms: String? = null, antonyms: String? = null, example: String? = null, imageUrl: String? = null, onResult: (Boolean) -> Unit = {}) = viewModelScope.launch {
         val success = repository.addSingleWord(courseId, front, back, definition, synonyms, antonyms, example, imageUrl)
         clearTranslationState()

@@ -115,6 +115,9 @@ interface VocabularyDao {
     @Update
     suspend fun updateWord(word: Word)
 
+    @Query("UPDATE words SET courseId = :targetCourseId WHERE id IN (:wordIds)")
+    suspend fun moveWordsToCourse(wordIds: List<Long>, targetCourseId: Long)
+
     @Delete
     suspend fun deleteWord(word: Word)
 

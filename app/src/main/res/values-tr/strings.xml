@@ -250,6 +250,11 @@
     <string name="base_form_label">Kelime Kökü: %1$s</string>
     <string name="root_word_label">Düzeltme: %1$s</string>
 
+    <!-- Changelog v2.3.5 -->
+    <string name="changelog_v2_3_5_title">Sürüm 2.3.5 - Kelime Taşıma &amp; Dosya Açma Desteği</string>
+    <string name="changelog_v2_3_5_item_1">Kelimeleri klasörler/kurslar arasında tekli veya toplu olarak taşıma özelliği eklendi</string>
+    <string name="changelog_v2_3_5_item_2">.finebulary uzantılı dosyalara tıklandığında uygulamanın otomatik açılması ve kursu içe aktarması sağlandı</string>
+
     <!-- Changelog v2.3.4 -->
     <string name="changelog_v2_3_4_title">Sürüm 2.3.4 - AI Hikayeleri, Karaoke Okuma &amp; Oyunlaştırma</string>
     <string name="changelog_v2_3_4_item_1">Yapay Zeka Kelime Hikayeleri eklendi: Seçilen kelimelerden koyu vurgulu kısa hikayeler ve çevirileri üretilebilir</string>
@@ -467,4 +472,12 @@
     <string name="challenge_share_title">Meydan Oku</string>
     <string name="word_already_exists">Bu kelime zaten bu klasörde mevcut!</string>
     <string name="close">Kapat</string>
+    <string name="move_to_folder">Klasöre Taşı</string>
+    <string name="select_destination_folder">Hedef Klasörü Seçin</string>
+    <string name="move_words_title">Kelimeleri Taşı</string>
+    <string name="move_confirm">Taşı</string>
+    <string name="move_words_count_fmt">%1$d kelime taşınacak</string>
+    <string name="no_folders_available">Başka klasör bulunmuyor</string>
+    <string name="current_folder">Mevcut Klasör</string>
+    <string name="words_moved_success">%1$d kelime %2$s klasörüne taşındı</string>
 </resources>

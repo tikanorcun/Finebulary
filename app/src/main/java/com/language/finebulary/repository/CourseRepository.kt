@@ -84,6 +84,10 @@ class CourseRepository(private val vocabularyDao: VocabularyDao) {
         vocabularyDao.updateWord(word)
     }
 
+    suspend fun moveWordsToCourse(wordIds: List<Long>, targetCourseId: Long) {
+        vocabularyDao.moveWordsToCourse(wordIds, targetCourseId)
+    }
+
     suspend fun deleteWord(word: Word) {
         vocabularyDao.deleteReviewStateForWord(word.id)
         vocabularyDao.deleteWord(word)

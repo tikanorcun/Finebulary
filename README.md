@@ -3,7 +3,7 @@
 ![Android](https://img.shields.io/badge/Platform-Android-3DDC84?style=flat-square&logo=android&logoColor=white)
 ![Kotlin](https://img.shields.io/badge/Kotlin-1.9+-7F52FF?style=flat-square&logo=kotlin&logoColor=white)
 ![Jetpack Compose](https://img.shields.io/badge/Jetpack%20Compose-UI-4285F4?style=flat-square&logo=jetpackcompose&logoColor=white)
-![Version](https://img.shields.io/badge/Version-v2.3.4-blue?style=flat-square)
+![Version](https://img.shields.io/badge/Version-v2.3.5-blue?style=flat-square)
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)
 
 **Finebulary** is a modern, feature-rich vocabulary learning and language mastery application built for Android using Jetpack Compose and Material 3. It combines smart spaced repetition, AI-powered word generation, AI micro-stories, karaoke-style reading, sentence shadowing, **P2P course sharing**, **vocabulary duels**, **home screen widgets**, and **gamified streak tracking** to supercharge your language learning journey.

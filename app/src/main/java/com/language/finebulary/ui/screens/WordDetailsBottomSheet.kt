@@ -2,6 +2,7 @@ package com.language.finebulary.ui.screens
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.DriveFileMove
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -21,6 +22,7 @@ fun WordDetailsBottomSheet(
     word: Word,
     reviewState: ReviewState?,
     onEdit: () -> Unit,
+    onMove: (() -> Unit)? = null,
     onDismiss: () -> Unit
 ) {
     ModalBottomSheet(
@@ -43,17 +45,33 @@ fun WordDetailsBottomSheet(
                 modifier = Modifier.weight(1f, fill = false)
             )
 
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(24.dp))
 
-            // Edit Action
-            Button(
-                onClick = onEdit,
+            // Action buttons
+            Row(
                 modifier = Modifier.fillMaxWidth(),
-                shape = MaterialTheme.shapes.small
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                Icon(Icons.Default.Edit, contentDescription = null)
-                Spacer(Modifier.width(8.dp))
-                Text(stringResource(R.string.edit_word_details), fontWeight = FontWeight.Bold)
+                if (onMove != null) {
+                    OutlinedButton(
+                        onClick = onMove,
+                        modifier = Modifier.weight(1f),
+                        shape = MaterialTheme.shapes.small
+                    ) {
+                        Icon(Icons.AutoMirrored.Filled.DriveFileMove, contentDescription = null, modifier = Modifier.size(18.dp))
+                        Spacer(Modifier.width(6.dp))
+                        Text(stringResource(R.string.move_to_folder), fontWeight = FontWeight.Bold)
+                    }
+                }
+                Button(
+                    onClick = onEdit,
+                    modifier = Modifier.weight(1f),
+                    shape = MaterialTheme.shapes.small
+                ) {
+                    Icon(Icons.Default.Edit, contentDescription = null, modifier = Modifier.size(18.dp))
+                    Spacer(Modifier.width(6.dp))
+                    Text(stringResource(R.string.edit_word_details), fontWeight = FontWeight.Bold)
+                }
             }
             
             Spacer(modifier = Modifier.height(8.dp))

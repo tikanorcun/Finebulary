@@ -272,13 +272,17 @@ fun DuelChallengeScreen(
 
                     Button(
                         onClick = {
-                            val challengeText = "⚔️ Finebulary '${packet.courseName}' düellosunda $score doğru yaptım! Sen de katıl: https://tikanorcun.github.io/Finebulary/duel?data=${DuelChallengeManager.encodePacketToUrlData(packet)}"
-                            val sendIntent = Intent().apply {
-                                action = Intent.ACTION_SEND
-                                putExtra(Intent.EXTRA_TEXT, challengeText)
-                                type = "text/plain"
+                            scope.launch {
+                                val longUrl = "https://tikanorcun.github.io/Finebulary/duel?data=${DuelChallengeManager.encodePacketToUrlData(packet)}"
+                                val shortUrl = DuelChallengeManager.shortenUrl(longUrl)
+                                val challengeText = "⚔️ Finebulary '${packet.courseName}' düellosunda $score doğru yaptım! Sen de katıl: $shortUrl"
+                                val sendIntent = Intent().apply {
+                                    action = Intent.ACTION_SEND
+                                    putExtra(Intent.EXTRA_TEXT, challengeText)
+                                    type = "text/plain"
+                                }
+                                context.startActivity(Intent.createChooser(sendIntent, context.getString(R.string.challenge_share_title)))
                             }
-                            context.startActivity(Intent.createChooser(sendIntent, context.getString(R.string.challenge_share_title)))
                         },
                         modifier = Modifier.fillMaxWidth(),
                         shape = MaterialTheme.shapes.medium

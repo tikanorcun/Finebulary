@@ -44,6 +44,7 @@ import androidx.compose.material.icons.automirrored.filled.VolumeUp
 import androidx.compose.material.icons.automirrored.filled.DriveFileMove
 import coil.compose.AsyncImage
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -57,6 +58,7 @@ fun CourseDetailsScreen(
 ) {
     val words by viewModel.getWordsForCourse(course.id).collectAsState(initial = emptyList())
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
     var selectedWordForDetails by remember { mutableStateOf<Word?>(null) }
     var wordToEdit by remember { mutableStateOf<Word?>(null) }
     var showReviewConfig by remember { mutableStateOf(false) }
@@ -534,17 +536,20 @@ fun CourseDetailsScreen(
                     Button(
                         onClick = {
                             showChallengeDialog = false
-                            val packet = com.language.finebulary.util.DuelChallengeManager.createPacket(course.name, words)
-                            val urlData = com.language.finebulary.util.DuelChallengeManager.encodePacketToUrlData(packet)
-                            val challengeUrl = "https://tikanorcun.github.io/Finebulary/duel?data=$urlData"
-                            val shareMsg = "⚔️ Finebulary '${course.name}' Düellosuna davet edildin!\nDoğrudan katılmak için tıkla: $challengeUrl"
+                            scope.launch {
+                                val packet = com.language.finebulary.util.DuelChallengeManager.createPacket(course.name, words)
+                                val urlData = com.language.finebulary.util.DuelChallengeManager.encodePacketToUrlData(packet)
+                                val longUrl = "https://tikanorcun.github.io/Finebulary/duel?data=$urlData"
+                                val shortUrl = com.language.finebulary.util.DuelChallengeManager.shortenUrl(longUrl)
+                                val shareMsg = "⚔️ Finebulary '${course.name}' Düellosuna davet edildin!\nDoğrudan katılmak için tıkla: $shortUrl"
 
-                            val sendIntent = Intent().apply {
-                                action = Intent.ACTION_SEND
-                                putExtra(Intent.EXTRA_TEXT, shareMsg)
-                                type = "text/plain"
+                                val sendIntent = Intent().apply {
+                                    action = Intent.ACTION_SEND
+                                    putExtra(Intent.EXTRA_TEXT, shareMsg)
+                                    type = "text/plain"
+                                }
+                                context.startActivity(Intent.createChooser(sendIntent, context.getString(R.string.challenge_share_title)))
                             }
-                            context.startActivity(Intent.createChooser(sendIntent, context.getString(R.string.challenge_share_title)))
                         },
                         modifier = Modifier.fillMaxWidth()
                     ) {

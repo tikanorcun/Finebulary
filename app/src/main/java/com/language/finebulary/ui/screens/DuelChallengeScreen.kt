@@ -272,7 +272,7 @@ fun DuelChallengeScreen(
 
                     Button(
                         onClick = {
-                            val challengeText = "⚔️ Finebulary '${packet.courseName}' düellosunda $score doğru yaptım! Sen de katıl: finebulary://duel?data=${DuelChallengeManager.encodePacketToUrlData(packet)}"
+                            val challengeText = "⚔️ Finebulary '${packet.courseName}' düellosunda $score doğru yaptım! Sen de katıl: https://tikanorcun.github.io/Finebulary/duel?data=${DuelChallengeManager.encodePacketToUrlData(packet)}"
                             val sendIntent = Intent().apply {
                                 action = Intent.ACTION_SEND
                                 putExtra(Intent.EXTRA_TEXT, challengeText)

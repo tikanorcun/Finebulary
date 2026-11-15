@@ -213,7 +213,13 @@ class MainActivity : AppCompatActivity() {
 
                     LaunchedEffect(intent) {
                         val uri = intent?.data
-                        val dataParam = uri?.getQueryParameter("data")
+                        var dataParam = uri?.getQueryParameter("data")
+                        if (dataParam.isNullOrBlank()) {
+                            val textExtra = intent?.getStringExtra(Intent.EXTRA_TEXT)
+                            if (!textExtra.isNullOrBlank()) {
+                                dataParam = Regex("data=([a-zA-Z0-9_-]+)").find(textExtra)?.groupValues?.getOrNull(1)
+                            }
+                        }
                         if (!dataParam.isNullOrBlank()) {
                             val packet = com.language.finebulary.util.DuelChallengeManager.decodePacketFromUrlData(dataParam)
                             if (packet != null) {
@@ -547,6 +553,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
+        setIntent(intent)
         handleIntent(intent)
     }
 

@@ -105,12 +105,28 @@
                 <data android:mimeType="*/*" />
             </intent-filter>
 
-            <!-- Deep Link Intent Filter for finebulary://duel -->
+            <!-- Custom scheme finebulary://duel -->
             <intent-filter tools:ignore="AppLinkUrlError">
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="finebulary" android:host="duel" />
+            </intent-filter>
+
+            <!-- Universal HTTPS link https://finebulary.app/duel -->
+            <intent-filter tools:ignore="AppLinkUrlError">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="https" android:host="finebulary.app" android:pathPrefix="/duel" />
+            </intent-filter>
+
+            <!-- Universal HTTPS link https://tikanorcun.github.io/Finebulary/duel -->
+            <intent-filter tools:ignore="AppLinkUrlError">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="https" android:host="tikanorcun.github.io" android:pathPrefix="/Finebulary/duel" />
             </intent-filter>
         </activity>
 

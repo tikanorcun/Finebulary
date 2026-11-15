@@ -536,7 +536,7 @@ fun CourseDetailsScreen(
                             showChallengeDialog = false
                             val packet = com.language.finebulary.util.DuelChallengeManager.createPacket(course.name, words)
                             val urlData = com.language.finebulary.util.DuelChallengeManager.encodePacketToUrlData(packet)
-                            val challengeUrl = "finebulary://duel?data=$urlData"
+                            val challengeUrl = "https://tikanorcun.github.io/Finebulary/duel?data=$urlData"
                             val shareMsg = "⚔️ Finebulary '${course.name}' Düellosuna davet edildin!\nDoğrudan katılmak için tıkla: $challengeUrl"
 
                             val sendIntent = Intent().apply {
@@ -558,7 +558,7 @@ fun CourseDetailsScreen(
                             showChallengeDialog = false
                             val packet = com.language.finebulary.util.DuelChallengeManager.createPacket(course.name, words)
                             val urlData = com.language.finebulary.util.DuelChallengeManager.encodePacketToUrlData(packet)
-                            val challengeUrl = "finebulary://duel?data=$urlData"
+                            val challengeUrl = "https://tikanorcun.github.io/Finebulary/duel?data=$urlData"
                             qrBitmapState = com.language.finebulary.util.QrCodeGenerator.generateQrCodeBitmap(challengeUrl)
                             showQrDialog = true
                         },

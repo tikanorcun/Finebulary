@@ -250,6 +250,12 @@
     <string name="base_form_label">Kelime Kökü: %1$s</string>
     <string name="root_word_label">Düzeltme: %1$s</string>
 
+    <!-- Changelog v2.3.6 Beta 1 -->
+    <string name="changelog_v2_3_6_beta1_title">Sürüm 2.3.6 Beta 1 - Dondurulmuş Paketli Düello &amp; Ortak Çalışma Testi</string>
+    <string name="changelog_v2_3_6_beta1_item_1">Kullanıcıların kelime değişikliklerinden etkilenmeyen %100 adil dondurulmuş meydan okuma paketleri eklendi.</string>
+    <string name="changelog_v2_3_6_beta1_item_2">Yan yanayken saniyeler içinde eşleşmek için QR kod taraması ve meydan okuma linki paylaşımı getirildi.</string>
+    <string name="changelog_v2_3_6_beta1_item_3">Düello sonrası opsiyonel klasör kaydetme, TTS seslendirme ve haptik/sesli geri bildirimler eklendi.</string>
+
     <!-- Changelog v2.3.5 -->
     <string name="changelog_v2_3_5_title">Sürüm 2.3.5 - Kelime Taşıma &amp; Dosya Açma Desteği</string>
     <string name="changelog_v2_3_5_item_1">Kelimeleri klasörler/kurslar arasında tekli veya toplu olarak taşıma özelliği eklendi</string>
@@ -480,4 +486,17 @@
     <string name="no_folders_available">Başka klasör bulunmuyor</string>
     <string name="current_folder">Mevcut Klasör</string>
     <string name="words_moved_success">%1$d kelime %2$s klasörüne taşındı</string>
+    <string name="start_coop_duel">🤝 Düello &amp; Ortak Çalışma</string>
+    <string name="challenge_packet_title">⚔️ Düello &amp; Ortak Çalışma Paketi</string>
+    <string name="share_duel_qr">QR Kod Göster</string>
+    <string name="share_duel_link">Meydan Okuma Linki Paylaş</string>
+    <string name="scan_qr_code">QR Kod Tara</string>
+    <string name="save_to_my_library">📥 Bu Klasörü Kütüphaneme Kaydet</string>
+    <string name="saved_to_library_success">Klasör kütüphanenize kaydedildi!</string>
+    <string name="frozen_mode_info">ℹ️ Bu düello dondurulmuş kelime paketi ile oynanıyor. Adil ve eşittir.</string>
+    <string name="coop_mastery_title">Ekip Ustalaşma Oranı</string>
+    <string name="both_wrong_words">🔴 Ortak Zorlanılan Kelimeler</string>
+    <string name="complementary_words_label">🤝 Birbirinizi Tamamlayan Kelimeler</string>
+    <string name="both_mastered_words">🟢 Birlikte Ustalaşılan Kelimeler</string>
+    <string name="coop_summary_title">🎯 Seans Analizi &amp; Karşılaştırma</string>
 </resources>

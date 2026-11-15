@@ -209,6 +209,20 @@ class MainActivity : AppCompatActivity() {
                         )
                     }
 
+                    var activeChallengePacket by remember { mutableStateOf<com.language.finebulary.data.model.DuelChallengePacket?>(null) }
+
+                    LaunchedEffect(intent) {
+                        val uri = intent?.data
+                        val dataParam = uri?.getQueryParameter("data")
+                        if (!dataParam.isNullOrBlank()) {
+                            val packet = com.language.finebulary.util.DuelChallengeManager.decodePacketFromUrlData(dataParam)
+                            if (packet != null) {
+                                activeChallengePacket = packet
+                                navController.navigate("duel_challenge")
+                            }
+                        }
+                    }
+
                     LaunchedEffect(incomingText) {
                         if (incomingText != null) {
                             showFolderPicker = true
@@ -357,6 +371,15 @@ class MainActivity : AppCompatActivity() {
                                 selectedCourse?.let { course ->
                                     DuelScreen(
                                         course = course,
+                                        viewModel = homeViewModel,
+                                        onBack = { navController.popBackStack() }
+                                    )
+                                }
+                            }
+                            composable("duel_challenge") {
+                                activeChallengePacket?.let { packet ->
+                                    DuelChallengeScreen(
+                                        packet = packet,
                                         viewModel = homeViewModel,
                                         onBack = { navController.popBackStack() }
                                     )

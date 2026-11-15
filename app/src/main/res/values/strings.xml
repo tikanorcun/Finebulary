@@ -252,6 +252,12 @@
     <string name="base_form_label">Base Form: %1$s</string>
     <string name="root_word_label">Root Word: %1$s</string>
 
+    <!-- Changelog v2.3.6 Beta 1 -->
+    <string name="changelog_v2_3_6_beta1_title">Version 2.3.6 Beta 1 - Frozen Snapshot Duel &amp; Co-op Testing</string>
+    <string name="changelog_v2_3_6_beta1_item_1">Introduced Self-Contained Frozen Snapshot Duel Packets for 100% fair duels.</string>
+    <string name="changelog_v2_3_6_beta1_item_2">Added instant side-by-side QR Code scanning and challenge link sharing.</string>
+    <string name="changelog_v2_3_6_beta1_item_3">Added optional post-duel folder saving and interactive TTS &amp; sound feedback.</string>
+
     <!-- Changelog v2.3.5 -->
     <string name="changelog_v2_3_5_title">Version 2.3.5 - Move Words &amp; File Association Support</string>
     <string name="changelog_v2_3_5_item_1">Added support for moving words between folders/courses individually or in bulk with a new folder selector dialog</string>
@@ -482,4 +488,17 @@
     <string name="no_folders_available">No other folders available</string>
     <string name="current_folder">Current Folder</string>
     <string name="words_moved_success">Moved %1$d word(s) to %2$s</string>
+    <string name="start_coop_duel">🤝 Duel &amp; Co-op Study</string>
+    <string name="challenge_packet_title">⚔️ Duel &amp; Co-op Packet</string>
+    <string name="share_duel_qr">Show QR Code</string>
+    <string name="share_duel_link">Share Challenge Link</string>
+    <string name="scan_qr_code">Scan QR Code</string>
+    <string name="save_to_my_library">📥 Save Folder to My Library</string>
+    <string name="saved_to_library_success">Folder saved to your library!</string>
+    <string name="frozen_mode_info">ℹ️ Playing with a frozen word snapshot for 100% fair duel.</string>
+    <string name="coop_mastery_title">Team Mastery Score</string>
+    <string name="both_wrong_words">🔴 Shared Weak Words</string>
+    <string name="complementary_words_label">🤝 Complementary Words</string>
+    <string name="both_mastered_words">🟢 Both Mastered Words</string>
+    <string name="coop_summary_title">🎯 Session Analysis &amp; Comparison</string>
 </resources>

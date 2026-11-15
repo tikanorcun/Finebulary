@@ -104,6 +104,14 @@
                 <data android:mimeType="application/x-finebulary" />
                 <data android:mimeType="*/*" />
             </intent-filter>
+
+            <!-- Deep Link Intent Filter for finebulary://duel -->
+            <intent-filter tools:ignore="AppLinkUrlError">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="finebulary" android:host="duel" />
+            </intent-filter>
         </activity>
 
         <service

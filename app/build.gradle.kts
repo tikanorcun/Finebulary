@@ -14,8 +14,8 @@ android {
         applicationId = "com.language.finebulary"
         minSdk = 24
         targetSdk = 34
-        versionCode = 29
-        versionName = "2.3.5"
+        versionCode = 30
+        versionName = "2.3.6-beta1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -92,6 +92,9 @@ dependencies {
     // AI
     implementation(libs.generativeai)
     
+    // QR Code
+    implementation("com.google.zxing:core:3.5.3")
+
     // Language Identification
     implementation("com.google.mlkit:language-id:17.0.6")
 

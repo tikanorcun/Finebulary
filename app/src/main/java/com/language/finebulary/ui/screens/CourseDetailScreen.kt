@@ -64,6 +64,9 @@ fun CourseDetailsScreen(
     var showDeleteConfirm by remember { mutableStateOf(false) }
     var showMicroStoryDialog by remember { mutableStateOf(false) }
     var showMoveDialog by remember { mutableStateOf(false) }
+    var showChallengeDialog by remember { mutableStateOf(false) }
+    var showQrDialog by remember { mutableStateOf(false) }
+    var qrBitmapState by remember { mutableStateOf<androidx.compose.ui.graphics.ImageBitmap?>(null) }
     var wordsToMove by remember { mutableStateOf<List<Word>>(emptyList()) }
     val reviewState by viewModel.selectedWordReviewState.collectAsState()
     
@@ -292,11 +295,11 @@ fun CourseDetailsScreen(
                                 )
                                 HorizontalDivider()
                                 DropdownMenuItem(
-                                    text = { Text(stringResource(R.string.start_duel)) },
+                                    text = { Text(stringResource(R.string.start_coop_duel)) },
                                     leadingIcon = { Icon(Icons.Default.SportsEsports, null) },
                                     onClick = {
                                         showMoreMenu = false
-                                        onStartDuel()
+                                        showChallengeDialog = true
                                     }
                                 )
                                 HorizontalDivider()
@@ -509,6 +512,114 @@ fun CourseDetailsScreen(
                     context.getString(R.string.words_moved_success, countMoved, targetName),
                     Toast.LENGTH_SHORT
                 ).show()
+            }
+        )
+    }
+
+    if (showChallengeDialog) {
+        AlertDialog(
+            onDismissRequest = { showChallengeDialog = false },
+            shape = MaterialTheme.shapes.large,
+            title = { Text(stringResource(R.string.challenge_packet_title), fontWeight = FontWeight.Bold) },
+            text = {
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Text(
+                        text = "Bu klasörün dondurulmuş kelime paketi ile arkadaşına meydan oku!",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+
+                    Button(
+                        onClick = {
+                            showChallengeDialog = false
+                            val packet = com.language.finebulary.util.DuelChallengeManager.createPacket(course.name, words)
+                            val urlData = com.language.finebulary.util.DuelChallengeManager.encodePacketToUrlData(packet)
+                            val challengeUrl = "finebulary://duel?data=$urlData"
+                            val shareMsg = "⚔️ Finebulary '${course.name}' Düellosuna davet edildin!\nDoğrudan katılmak için tıkla: $challengeUrl"
+
+                            val sendIntent = Intent().apply {
+                                action = Intent.ACTION_SEND
+                                putExtra(Intent.EXTRA_TEXT, shareMsg)
+                                type = "text/plain"
+                            }
+                            context.startActivity(Intent.createChooser(sendIntent, context.getString(R.string.challenge_share_title)))
+                        },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Icon(Icons.Default.Share, null)
+                        Spacer(Modifier.width(8.dp))
+                        Text(stringResource(R.string.share_duel_link))
+                    }
+
+                    OutlinedButton(
+                        onClick = {
+                            showChallengeDialog = false
+                            val packet = com.language.finebulary.util.DuelChallengeManager.createPacket(course.name, words)
+                            val urlData = com.language.finebulary.util.DuelChallengeManager.encodePacketToUrlData(packet)
+                            val challengeUrl = "finebulary://duel?data=$urlData"
+                            qrBitmapState = com.language.finebulary.util.QrCodeGenerator.generateQrCodeBitmap(challengeUrl)
+                            showQrDialog = true
+                        },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Icon(Icons.Default.QrCode, null)
+                        Spacer(Modifier.width(8.dp))
+                        Text(stringResource(R.string.share_duel_qr))
+                    }
+
+                    ElevatedButton(
+                        onClick = {
+                            showChallengeDialog = false
+                            onStartDuel()
+                        },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Icon(Icons.Default.PlayArrow, null)
+                        Spacer(Modifier.width(8.dp))
+                        Text("⚡ Hemen Kendin Oyna")
+                    }
+                }
+            },
+            confirmButton = {},
+            dismissButton = {
+                TextButton(onClick = { showChallengeDialog = false }) {
+                    Text(stringResource(R.string.close))
+                }
+            }
+        )
+    }
+
+    if (showQrDialog && qrBitmapState != null) {
+        AlertDialog(
+            onDismissRequest = { showQrDialog = false },
+            shape = MaterialTheme.shapes.large,
+            title = { Text(stringResource(R.string.share_duel_qr), fontWeight = FontWeight.Bold) },
+            text = {
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    Text(
+                        text = "Arkadaşın bu QR kodu Finebulary ile taratarak anında aynı düelloya girebilir!",
+                        style = MaterialTheme.typography.bodyMedium,
+                        textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                    )
+                    androidx.compose.foundation.Image(
+                        bitmap = qrBitmapState!!,
+                        contentDescription = "QR Code",
+                        modifier = Modifier
+                            .size(240.dp)
+                            .padding(8.dp)
+                    )
+                }
+            },
+            confirmButton = {
+                Button(onClick = { showQrDialog = false }) {
+                    Text(stringResource(R.string.close))
+                }
             }
         )
     }

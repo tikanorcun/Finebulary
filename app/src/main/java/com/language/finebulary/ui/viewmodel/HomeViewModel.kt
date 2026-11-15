@@ -554,6 +554,29 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    fun saveDuelChallengeCourse(packet: com.language.finebulary.data.model.DuelChallengePacket, onResult: (Boolean) -> Unit) {
+        viewModelScope.launch {
+            try {
+                val courseName = "${packet.courseName} (Düello)"
+                val newCourseId = repository.addCourseObject(Course(name = courseName, isPersonal = false))
+                val words = packet.words.map { snapshot ->
+                    Word(
+                        courseId = newCourseId,
+                        front = snapshot.front,
+                        backsPacked = snapshot.backsPacked,
+                        definition = snapshot.definition,
+                        example = snapshot.example
+                    )
+                }
+                repository.addWords(words)
+                onResult(true)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                onResult(false)
+            }
+        }
+    }
+
     private val _aiGenerationState = MutableStateFlow<AiGenerationState>(AiGenerationState.Idle)
     val aiGenerationState: StateFlow<AiGenerationState> = _aiGenerationState
 

@@ -123,6 +123,7 @@ class UserPreferences(private val context: Context) {
     val srsPrioritizeWeakWords: Flow<Boolean> = context.dataStore.data.map { it[SRS_PRIORITIZE_WEAK_WORDS_KEY] ?: true }
     val ttsSpeedRate: Flow<Float> = context.dataStore.data.map { it[TTS_SPEED_RATE_KEY] ?: 1.0f }
     val currentStreak: Flow<Int> = context.dataStore.data.map { it[CURRENT_STREAK_KEY] ?: 0 }
+    val lastActiveDate: Flow<String?> = context.dataStore.data.map { it[LAST_ACTIVE_DATE_KEY] }
 
     suspend fun setThemeMode(mode: ThemeMode) { context.dataStore.edit { it[THEME_MODE_KEY] = mode.name } }
     suspend fun setAppThemeColor(color: AppThemeColor) { context.dataStore.edit { it[APP_THEME_COLOR_KEY] = color.name } }
@@ -170,6 +171,14 @@ class UserPreferences(private val context: Context) {
     suspend fun setSrsMaxDailyCap(cap: Int) { context.dataStore.edit { it[SRS_MAX_DAILY_CAP_KEY] = cap } }
     suspend fun setSrsPrioritizeWeakWords(enabled: Boolean) { context.dataStore.edit { it[SRS_PRIORITIZE_WEAK_WORDS_KEY] = enabled } }
     suspend fun setTtsSpeedRate(rate: Float) { context.dataStore.edit { it[TTS_SPEED_RATE_KEY] = rate } }
+    suspend fun setStreakData(streak: Int, lastActiveDate: String?) {
+        context.dataStore.edit { p ->
+            p[CURRENT_STREAK_KEY] = streak
+            if (lastActiveDate != null) {
+                p[LAST_ACTIVE_DATE_KEY] = lastActiveDate
+            }
+        }
+    }
 
     suspend fun recordActivity() {
         val sdf = java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault())

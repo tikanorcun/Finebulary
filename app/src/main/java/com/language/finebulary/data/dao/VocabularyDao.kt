@@ -31,6 +31,12 @@ interface VocabularyDao {
     @Query("SELECT * FROM ielts_passages ORDER BY createdAtEpochMs DESC")
     fun getAllIeltsPassages(): Flow<List<IeltsPassageEntity>>
 
+    @Query("SELECT * FROM ielts_passages")
+    suspend fun getAllIeltsPassagesRaw(): List<IeltsPassageEntity>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertIeltsPassages(passages: List<IeltsPassageEntity>)
+
     @Insert
     suspend fun insertIeltsPassage(passage: IeltsPassageEntity): Long
 
@@ -46,6 +52,12 @@ interface VocabularyDao {
     // Daily Progress
     @Query("SELECT * FROM daily_progress WHERE date = :date")
     fun getDailyProgress(date: String): Flow<DailyProgress?>
+
+    @Query("SELECT * FROM daily_progress")
+    suspend fun getAllDailyProgressRaw(): List<DailyProgress>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertDailyProgressList(progressList: List<DailyProgress>)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertDailyProgress(progress: DailyProgress)

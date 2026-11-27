@@ -1,6 +1,8 @@
 package com.language.finebulary.util
 
 import com.language.finebulary.data.model.Course
+import com.language.finebulary.data.model.DailyProgress
+import com.language.finebulary.data.model.IeltsPassageEntity
 import com.language.finebulary.data.model.ReviewState
 import com.language.finebulary.data.model.Word
 import com.google.gson.Gson
@@ -10,6 +12,8 @@ data class BackupData(
     val courses: List<Course>? = null,
     val words: List<Word>? = null,
     val reviewStates: List<ReviewState>? = null,
+    val ieltsPassages: List<IeltsPassageEntity>? = null,
+    val dailyProgress: List<DailyProgress>? = null,
     val settings: Map<String, String>? = null
 )
 
@@ -20,16 +24,18 @@ object BackupManager {
         courses: List<Course>? = null,
         words: List<Word>? = null,
         reviewStates: List<ReviewState>? = null,
+        ieltsPassages: List<IeltsPassageEntity>? = null,
+        dailyProgress: List<DailyProgress>? = null,
         settings: Map<String, String>? = null
     ): String {
-        val data = BackupData(courses, words, reviewStates, settings)
+        val data = BackupData(courses, words, reviewStates, ieltsPassages, dailyProgress, settings)
         return gson.toJson(data)
     }
 
     fun parseBackupJson(json: String): BackupData? {
         return try {
             gson.fromJson(json, BackupData::class.java)
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             null
         }
     }

@@ -102,11 +102,21 @@ class CourseRepository(private val vocabularyDao: VocabularyDao) {
     suspend fun getAllWordsRaw() = vocabularyDao.getAllWordsRaw()
     suspend fun getWordsForCourseIds(courseIds: List<Long>) = vocabularyDao.getWordsForCourseIds(courseIds)
     suspend fun getAllReviewStatesRaw() = vocabularyDao.getAllReviewStatesRaw()
+    suspend fun getAllIeltsPassagesRaw() = vocabularyDao.getAllIeltsPassagesRaw()
+    suspend fun getAllDailyProgressRaw() = vocabularyDao.getAllDailyProgressRaw()
 
-    suspend fun importFullData(courses: List<Course>, words: List<Word>, states: List<ReviewState>) {
+    suspend fun importFullData(
+        courses: List<Course>,
+        words: List<Word>,
+        states: List<ReviewState>,
+        passages: List<IeltsPassageEntity>? = null,
+        dailyProgress: List<DailyProgress>? = null
+    ) {
         vocabularyDao.insertCourses(courses)
         vocabularyDao.insertWords(words)
         vocabularyDao.insertReviewStates(states)
+        passages?.let { vocabularyDao.insertIeltsPassages(it) }
+        dailyProgress?.let { vocabularyDao.insertDailyProgressList(it) }
     }
 
     suspend fun insertWordsReturnIds(words: List<Word>): List<Long> = vocabularyDao.insertWords(words)

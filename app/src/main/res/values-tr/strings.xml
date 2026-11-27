@@ -250,6 +250,13 @@
     <string name="base_form_label">Kelime Kökü: %1$s</string>
     <string name="root_word_label">Düzeltme: %1$s</string>
 
+    <!-- Changelog v2.3.7 -->
+    <string name="changelog_v2_3_7_title">Sürüm 2.3.7 - Eksiksiz Yedekleme, Çevrimdışı Deyimler &amp; Arayüz Cilalaması</string>
+    <string name="changelog_v2_3_7_item_1">Yedekleme ve Geri Yükleme Motoru Düzeltildi: Akademi okuma parçaları, test yanıtları, günlük seriler, ses API anahtarları, tema renkleri ve hedefler %100 eksiksiz yedekleniyor</string>
+    <string name="changelog_v2_3_7_item_2">Dahili Çevrimdışı Deyim &amp; Phrasal Verb Sözlüğü eklendi (150+ kalıp ifade, örn. \"a load of waffle\" -&gt; \"boş konuşma, zırva\") ve çoklu anlam destekli arama motoru entegre edildi</string>
+    <string name="changelog_v2_3_7_item_3">Akademi Sihirbazı yenilendi: Hizalı CEFR seviye hapları, hızlı konu önerileri ve 4 adımlı canlı AI üretim ekranı eklendi; okuma kartları temizlendi</string>
+    <string name="changelog_v2_3_7_item_4">Kelime ekleme kutusu genişletildi (ses butonları alta taşındı); kelime taşıma ve .finebulary uzantılı dosyaları tıklayarak açma desteği eklendi</string>
+
     <!-- Changelog v2.3.6 -->
     <string name="changelog_v2_3_6_title">Sürüm 2.3.6 - Dondurulmuş Paketli Düello &amp; Ortak Çalışma Modu</string>
     <string name="changelog_v2_3_6_item_1">Kullanıcıların kelime değişikliklerinden etkilenmeyen %100 adil dondurulmuş meydan okuma paketleri eklendi</string>
@@ -478,7 +485,15 @@
     <string name="challenge_share_title">Meydan Oku</string>
     <string name="word_already_exists">Bu kelime zaten bu klasörde mevcut!</string>
     <string name="close">Kapat</string>
+    <string name="sentence_translation_title">Cümle Çevirisi &amp; Telaffuz</string>
     <string name="move_to_folder">Klasöre Taşı</string>
+    <string name="academy_wizard_step1">1. Dil ve Seviye Seçimi</string>
+    <string name="academy_wizard_step2">2. Kategori ve Konu</string>
+    <string name="academy_suggested_topics">Hızlı Konu Önerileri:</string>
+    <string name="academy_gen_step_1">🧠 Konu ve akademik kelimeler seçiliyor...</string>
+    <string name="academy_gen_step_2">✍️ CEFR seviyesine uygun okuma parçası yazılıyor...</string>
+    <string name="academy_gen_step_3">🌐 Çeviri ve kelime tanımları hazırlanıyor...</string>
+    <string name="academy_gen_step_4">🎯 Okuduğunu anlama sınav soruları hazırlanıyor...</string>
     <string name="select_destination_folder">Hedef Klasörü Seçin</string>
     <string name="move_words_title">Kelimeleri Taşı</string>
     <string name="move_confirm">Taşı</string>

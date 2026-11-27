@@ -3,6 +3,7 @@ package com.language.finebulary.ui.screens
 import android.Manifest
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -18,7 +19,9 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import kotlinx.coroutines.delay
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
@@ -169,123 +172,289 @@ fun IeltsReadingScreen(
                                 .fillMaxSize()
                                 .verticalScroll(rememberScrollState())
                                 .padding(16.dp),
-                            verticalArrangement = Arrangement.spacedBy(12.dp)
+                            verticalArrangement = Arrangement.spacedBy(16.dp)
                         ) {
-                            // Kompakt Başlık Alanı
-                            Row(
+                            // Hero Banner Card
+                            ElevatedCard(
                                 modifier = Modifier.fillMaxWidth(),
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                                shape = MaterialTheme.shapes.medium,
+                                colors = CardDefaults.elevatedCardColors(
+                                    containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f)
+                                )
                             ) {
-                                Surface(
-                                    shape = MaterialTheme.shapes.medium,
-                                    color = MaterialTheme.colorScheme.primaryContainer,
-                                    modifier = Modifier.size(40.dp)
+                                Row(
+                                    modifier = Modifier.padding(16.dp),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(14.dp)
                                 ) {
-                                    Box(contentAlignment = Alignment.Center) {
-                                        Icon(Icons.Default.School, null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(24.dp))
+                                    Surface(
+                                        shape = MaterialTheme.shapes.medium,
+                                        color = MaterialTheme.colorScheme.primary,
+                                        modifier = Modifier.size(48.dp)
+                                    ) {
+                                        Box(contentAlignment = Alignment.Center) {
+                                            Icon(Icons.Default.School, null, tint = MaterialTheme.colorScheme.onPrimary, modifier = Modifier.size(28.dp))
+                                        }
+                                    }
+                                    Column(modifier = Modifier.weight(1f)) {
+                                        Text(stringResource(R.string.academy_title), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
+                                        Spacer(Modifier.height(2.dp))
+                                        Text(stringResource(R.string.academy_subtitle), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                                     }
                                 }
-                                Column(modifier = Modifier.weight(1f)) {
-                                    Text(stringResource(R.string.academy_title), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
-                                    Text(stringResource(R.string.academy_subtitle), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.secondary)
-                                }
                             }
 
-                            HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
-
-                            // 1. Dil Seçimleri (Yan Yana)
-                            Row(
+                            // Step 1 Card: Languages & Level
+                            OutlinedCard(
                                 modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                shape = MaterialTheme.shapes.medium
                             ) {
-                                Column(modifier = Modifier.weight(1f)) {
-                                    Text(stringResource(R.string.target_lang_label), style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold)
+                                Column(
+                                    modifier = Modifier.padding(16.dp),
+                                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                                ) {
+                                    Text(
+                                        text = stringResource(R.string.academy_wizard_step1),
+                                        style = MaterialTheme.typography.titleMedium,
+                                        fontWeight = FontWeight.Bold,
+                                        color = MaterialTheme.colorScheme.primary
+                                    )
+
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.spacedBy(10.dp)
+                                    ) {
+                                        Column(modifier = Modifier.weight(1f)) {
+                                            Text(stringResource(R.string.target_lang_label), style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.SemiBold)
+                                            Spacer(Modifier.height(4.dp))
+                                            LanguagePicker(
+                                                selected = selectedTargetLang,
+                                                isExpanded = showTargetMenu,
+                                                onToggle = { showTargetMenu = !showTargetMenu },
+                                                onSelect = { selectedTargetLang = it; showTargetMenu = false }
+                                            )
+                                        }
+                                        Column(modifier = Modifier.weight(1f)) {
+                                            Text(stringResource(R.string.explanation_lang_label), style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.SemiBold)
+                                            Spacer(Modifier.height(4.dp))
+                                            LanguagePicker(
+                                                selected = selectedNativeLang,
+                                                isExpanded = showNativeMenu,
+                                                onToggle = { showNativeMenu = !showNativeMenu },
+                                                onSelect = { selectedNativeLang = it; showNativeMenu = false }
+                                            )
+                                        }
+                                    }
+
                                     Spacer(Modifier.height(4.dp))
-                                    LanguagePicker(
-                                        selected = selectedTargetLang,
-                                        isExpanded = showTargetMenu,
-                                        onToggle = { showTargetMenu = !showTargetMenu },
-                                        onSelect = { selectedTargetLang = it; showTargetMenu = false }
-                                    )
+
+                                    Text(stringResource(R.string.difficulty_level), style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.SemiBold)
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                                    ) {
+                                        levels.forEach { level ->
+                                            val isSelected = selectedLevel == level
+                                            Surface(
+                                                selected = isSelected,
+                                                onClick = { selectedLevel = level },
+                                                shape = MaterialTheme.shapes.small,
+                                                color = if (isSelected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f),
+                                                border = BorderStroke(
+                                                    width = 1.dp,
+                                                    color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant
+                                                ),
+                                                modifier = Modifier
+                                                    .weight(1f)
+                                                    .height(36.dp)
+                                            ) {
+                                                Box(contentAlignment = Alignment.Center) {
+                                                    Text(
+                                                        text = level,
+                                                        style = MaterialTheme.typography.labelMedium,
+                                                        fontWeight = if (isSelected) FontWeight.ExtraBold else FontWeight.Medium,
+                                                        color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
+                                                    )
+                                                }
+                                            }
+                                        }
+                                    }
                                 }
-                                Column(modifier = Modifier.weight(1f)) {
-                                    Text(stringResource(R.string.explanation_lang_label), style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold)
+                            }
+
+                            // Step 2 Card: Category & Topic
+                            OutlinedCard(
+                                modifier = Modifier.fillMaxWidth(),
+                                shape = MaterialTheme.shapes.medium
+                            ) {
+                                Column(
+                                    modifier = Modifier.padding(16.dp),
+                                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                                ) {
+                                    Text(
+                                        text = stringResource(R.string.academy_wizard_step2),
+                                        style = MaterialTheme.typography.titleMedium,
+                                        fontWeight = FontWeight.Bold,
+                                        color = MaterialTheme.colorScheme.primary
+                                    )
+
+                                    Text(stringResource(R.string.content_category_label), style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.SemiBold)
+                                    FlowRow(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.spacedBy(6.dp),
+                                        verticalArrangement = Arrangement.spacedBy(6.dp)
+                                    ) {
+                                        categories.forEach { catPair ->
+                                            FilterChip(
+                                                selected = selectedCategoryPair == catPair,
+                                                onClick = { selectedCategoryPair = catPair },
+                                                label = { Text(catPair.first, fontSize = 13.sp) }
+                                            )
+                                        }
+                                    }
+
                                     Spacer(Modifier.height(4.dp))
-                                    LanguagePicker(
-                                        selected = selectedNativeLang,
-                                        isExpanded = showNativeMenu,
-                                        onToggle = { showNativeMenu = !showNativeMenu },
-                                        onSelect = { selectedNativeLang = it; showNativeMenu = false }
+
+                                    Text(stringResource(R.string.custom_topic_label), style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.SemiBold)
+                                    OutlinedTextField(
+                                        value = customTopic,
+                                        onValueChange = { customTopic = it },
+                                        placeholder = { Text(stringResource(R.string.custom_topic_placeholder)) },
+                                        modifier = Modifier.fillMaxWidth(),
+                                        shape = MaterialTheme.shapes.small,
+                                        singleLine = true,
+                                        trailingIcon = {
+                                            if (customTopic.isNotEmpty()) {
+                                                IconButton(onClick = { customTopic = "" }) {
+                                                    Icon(Icons.Default.Clear, null)
+                                                }
+                                            }
+                                        }
                                     )
+
+                                    Text(stringResource(R.string.academy_suggested_topics), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                    val suggestedTopics = listOf("🤖 Artificial Intelligence", "🌿 Climate Change", "🚀 Space Exploration", "🏛️ Ancient History", "💼 Global Economics")
+                                    FlowRow(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.spacedBy(6.dp),
+                                        verticalArrangement = Arrangement.spacedBy(6.dp)
+                                    ) {
+                                        suggestedTopics.forEach { topic ->
+                                            SuggestionChip(
+                                                onClick = {
+                                                    customTopic = topic.substringAfter(" ").trim()
+                                                },
+                                                label = { Text(topic, fontSize = 12.sp) }
+                                            )
+                                        }
+                                    }
                                 }
                             }
 
-                            // 2. Kategori Seçimi
-                            Text(stringResource(R.string.content_category_label), style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold)
-                            FlowRow(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.spacedBy(6.dp),
-                                verticalArrangement = Arrangement.spacedBy(6.dp)
-                            ) {
-                                categories.forEach { catPair ->
-                                    FilterChip(
-                                        selected = selectedCategoryPair == catPair,
-                                        onClick = { selectedCategoryPair = catPair },
-                                        label = { Text(catPair.first, fontSize = 13.sp) }
-                                    )
-                                }
-                            }
-
-                            // 3. Zorluk Seviyesi
-                            Text(stringResource(R.string.difficulty_level), style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold)
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween
-                            ) {
-                                levels.forEach { level ->
-                                    FilterChip(
-                                        selected = selectedLevel == level,
-                                        onClick = { selectedLevel = level },
-                                        label = { Text(level, fontSize = 13.sp) }
-                                    )
-                                }
-                            }
-
-                            // 4. Özel Konu
-                            Text(stringResource(R.string.custom_topic_label), style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold)
-                            OutlinedTextField(
-                                value = customTopic,
-                                onValueChange = { customTopic = it },
-                                placeholder = { Text(stringResource(R.string.custom_topic_placeholder)) },
-                                modifier = Modifier.fillMaxWidth(),
-                                shape = MaterialTheme.shapes.small,
-                                singleLine = true
-                            )
-
-                            Spacer(Modifier.height(8.dp))
+                            Spacer(Modifier.height(4.dp))
 
                             Button(
                                 onClick = { 
                                     val fullTopic = "Category: ${selectedCategoryPair.second}. ${customTopic.ifBlank { "" }}"
                                     viewModel.generateIeltsReading(selectedLevel, selectedNativeLang.code, selectedTargetLang.code, fullTopic) 
                                 },
-                                modifier = Modifier.fillMaxWidth(),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(52.dp),
                                 shape = MaterialTheme.shapes.medium
                             ) {
-                                Text(stringResource(R.string.start_reading), fontWeight = FontWeight.Bold)
+                                Icon(Icons.Default.AutoAwesome, contentDescription = null, modifier = Modifier.size(20.dp))
+                                Spacer(Modifier.width(8.dp))
+                                Text(stringResource(R.string.start_reading), fontWeight = FontWeight.Bold, fontSize = 16.sp)
                             }
                         }
                     }
                     is IeltsReadingState.Loading -> {
+                        var currentStep by remember { mutableIntStateOf(0) }
+                        val stepMessages = listOf(
+                            stringResource(R.string.academy_gen_step_1),
+                            stringResource(R.string.academy_gen_step_2),
+                            stringResource(R.string.academy_gen_step_3),
+                            stringResource(R.string.academy_gen_step_4)
+                        )
+
+                        LaunchedEffect(Unit) {
+                            while (currentStep < stepMessages.size - 1) {
+                                delay(2200L)
+                                currentStep++
+                            }
+                        }
+
                         Column(
-                            modifier = Modifier.fillMaxSize(),
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(24.dp),
                             horizontalAlignment = Alignment.CenterHorizontally,
                             verticalArrangement = Arrangement.Center
                         ) {
-                            CircularProgressIndicator()
-                            Spacer(Modifier.height(16.dp))
-                            Text(stringResource(R.string.curating_content), style = MaterialTheme.typography.bodyMedium)
+                            ElevatedCard(
+                                modifier = Modifier.fillMaxWidth(),
+                                shape = MaterialTheme.shapes.large,
+                                colors = CardDefaults.elevatedCardColors(
+                                    containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+                                )
+                            ) {
+                                Column(
+                                    modifier = Modifier.padding(24.dp),
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                                ) {
+                                    Surface(
+                                        shape = MaterialTheme.shapes.large,
+                                        color = MaterialTheme.colorScheme.primaryContainer,
+                                        modifier = Modifier.size(64.dp)
+                                    ) {
+                                        Box(contentAlignment = Alignment.Center) {
+                                            Icon(
+                                                Icons.Default.AutoAwesome,
+                                                contentDescription = null,
+                                                tint = MaterialTheme.colorScheme.primary,
+                                                modifier = Modifier.size(36.dp)
+                                            )
+                                        }
+                                    }
+
+                                    Text(
+                                        text = stringResource(R.string.curating_content),
+                                        style = MaterialTheme.typography.titleMedium,
+                                        fontWeight = FontWeight.Bold,
+                                        color = MaterialTheme.colorScheme.primary
+                                    )
+
+                                    LinearProgressIndicator(
+                                        progress = { (currentStep + 1) / 4f },
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .height(8.dp)
+                                            .clip(MaterialTheme.shapes.small)
+                                    )
+
+                                    Surface(
+                                        color = MaterialTheme.colorScheme.surface,
+                                        shape = MaterialTheme.shapes.medium,
+                                        modifier = Modifier.fillMaxWidth()
+                                    ) {
+                                        Text(
+                                            text = stepMessages[currentStep],
+                                            style = MaterialTheme.typography.bodyLarge,
+                                            fontWeight = FontWeight.SemiBold,
+                                            modifier = Modifier.padding(16.dp),
+                                            color = MaterialTheme.colorScheme.onSurface
+                                        )
+                                    }
+
+                                    Text(
+                                        text = "Adım ${currentStep + 1} / 4",
+                                        style = MaterialTheme.typography.labelSmall,
+                                        color = MaterialTheme.colorScheme.outline
+                                    )
+                                }
+                            }
                         }
                     }
                     is IeltsReadingState.Success -> {
@@ -475,18 +644,6 @@ fun IeltsReadingScreen(
                                                             }
                                                         }
                                                     }
-
-                                                    IconButton(
-                                                        onClick = { shadowingSentence = sentence },
-                                                        modifier = Modifier.size(32.dp)
-                                                    ) {
-                                                        Icon(
-                                                            imageVector = Icons.Default.Mic,
-                                                            contentDescription = "Shadowing Practice",
-                                                            tint = MaterialTheme.colorScheme.primary,
-                                                            modifier = Modifier.size(18.dp)
-                                                        )
-                                                    }
                                                 }
                                             }
                                         }
@@ -617,25 +774,84 @@ fun IeltsReadingScreen(
                 )
             }
 
-            // Sentence Translation Dialog
+            // Sentence Translation & Practice Dialog
             if (selectedSentence != null) {
+                val sentenceTxt = selectedSentence!!
+                val translatedTxt by viewModel.sentenceTranslation.collectAsState()
+
                 AlertDialog(
                     onDismissRequest = { selectedSentence = null; viewModel.clearTranslationState() },
-                    title = { Text("Sentence Translation", fontWeight = FontWeight.Bold) },
+                    shape = MaterialTheme.shapes.large,
+                    title = {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(Icons.Default.Translate, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+                            Spacer(Modifier.width(8.dp))
+                            Text(stringResource(R.string.sentence_translation_title), fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium)
+                        }
+                    },
                     text = {
-                        Column {
-                            Text(selectedSentence!!, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.secondary)
-                            Spacer(Modifier.height(16.dp))
+                        Column(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            Surface(
+                                color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
+                                shape = MaterialTheme.shapes.medium,
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Text(
+                                    text = sentenceTxt,
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    color = MaterialTheme.colorScheme.onSurface,
+                                    modifier = Modifier.padding(12.dp)
+                                )
+                            }
+
                             if (translationState is TranslationState.Loading) {
-                                CircularProgressIndicator()
-                            } else if (viewModel.sentenceTranslation.collectAsState().value != null) {
-                                Text(viewModel.sentenceTranslation.collectAsState().value!!, style = MaterialTheme.typography.titleLarge, color = MaterialTheme.colorScheme.primary)
+                                CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
+                            } else if (!translatedTxt.isNullOrBlank()) {
+                                Text(
+                                    text = translatedTxt!!,
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                            }
+
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(top = 8.dp),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                OutlinedButton(
+                                    onClick = { TtsManager.speak(sentenceTxt, selectedTargetLang.code) },
+                                    modifier = Modifier.weight(1f),
+                                    shape = MaterialTheme.shapes.small
+                                ) {
+                                    Icon(Icons.AutoMirrored.Filled.VolumeUp, null, modifier = Modifier.size(18.dp))
+                                    Spacer(Modifier.width(4.dp))
+                                    Text(stringResource(R.string.listen_original), fontSize = 12.sp)
+                                }
+                                Button(
+                                    onClick = {
+                                        selectedSentence = null
+                                        viewModel.clearTranslationState()
+                                        shadowingSentence = sentenceTxt
+                                    },
+                                    modifier = Modifier.weight(1f),
+                                    shape = MaterialTheme.shapes.small
+                                ) {
+                                    Icon(Icons.Default.Mic, null, modifier = Modifier.size(18.dp))
+                                    Spacer(Modifier.width(4.dp))
+                                    Text(stringResource(R.string.speak_button), fontSize = 12.sp)
+                                }
                             }
                         }
                     },
                     confirmButton = {
-                        Button(onClick = { selectedSentence = null }) {
-                            Text("Got it")
+                        TextButton(onClick = { selectedSentence = null; viewModel.clearTranslationState() }) {
+                            Text(stringResource(R.string.close))
                         }
                     }
                 )

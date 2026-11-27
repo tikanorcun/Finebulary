@@ -84,7 +84,14 @@ object TranslationManager {
         targetLangCode: String,
         provider: String = "GOOGLE"
     ): String? {
-        // If source/target language are the same (Monolingual L2 -> L2 learning), return definition & synonyms instead of translating
+        // 1. Check local idiom and phrasal verb dictionary first (Fast, offline, 100% accurate for expressions like "a load of waffle")
+        val localIdiom = LocalIdiomDictionary.findIdiom(text, targetLangCode)
+        if (localIdiom != null) {
+            Log.d(TAG, "Local Idiom Match Found: ${localIdiom.english} -> ${localIdiom.turkishMeaning}")
+            return localIdiom.turkishMeaning
+        }
+
+        // 2. If source/target language are the same (Monolingual L2 -> L2 learning), return definition & synonyms instead of translating
         if (sourceLangCode.lowercase() == targetLangCode.lowercase()) {
             val details = getDictionaryDetails(text, targetLangCode, targetLangCode, "WIKTIONARY")
             val def = details.definition
@@ -119,13 +126,18 @@ object TranslationManager {
             val response = googleApi.translate(target = tl, source = sl, text = text)
             val jsonString = response.string()
             val outerArray = JsonParser.parseString(jsonString).asJsonArray
-            val innerArray = outerArray.get(0).asJsonArray
             
+            // Primary Translation Text
+            val innerArray = outerArray.get(0).asJsonArray
             val sb = StringBuilder()
             for (i in 0 until innerArray.size()) {
-                sb.append(innerArray.get(i).asJsonArray.get(0).asString)
+                val element = innerArray.get(i)
+                if (element.isJsonArray && element.asJsonArray.size() > 0 && !element.asJsonArray.get(0).isJsonNull) {
+                    sb.append(element.asJsonArray.get(0).asString)
+                }
             }
-            sb.toString()
+            val primaryTranslation = sb.toString().trim()
+            if (primaryTranslation.isNotBlank()) primaryTranslation else null
         } catch (e: Exception) {
             Log.e(TAG, "Google API Exception: ${e.message}")
             null
@@ -214,8 +226,15 @@ object TranslationManager {
             baseFormTranslation = translate(baseForm, targetLangCode, nativeLangCode)
         }
 
-        // 2. Logic for Definition (Prefer slow detailed, fallback to fast Datamuse)
-        val definition = slowEntry?.meanings?.firstOrNull()?.definitions?.firstOrNull()?.definition
+        // Check local idiom dictionary for explanation
+        val localIdiom = LocalIdiomDictionary.findIdiom(text, nativeLangCode)
+        val idiomDefinition = if (localIdiom != null) {
+            "[Deyim / Phrasal Verb] ${localIdiom.explanation ?: "Kalıp ifade"}"
+        } else null
+
+        // 2. Logic for Definition (Prefer idiom definition, then slow detailed, fallback to fast Datamuse)
+        val definition = idiomDefinition
+            ?: slowEntry?.meanings?.firstOrNull()?.definitions?.firstOrNull()?.definition
             ?: datamuseEntry?.defs?.firstOrNull()?.let { 
                 // Datamuse defs come like "n\tdefinition", clean it up
                 if (it.contains("\t")) it.substringAfter("\t") else it

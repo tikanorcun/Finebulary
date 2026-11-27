@@ -301,27 +301,40 @@ class HomeViewModel @Inject constructor(
         .map { code -> supportedLanguages.find { it.code == code } ?: supportedLanguages.first() }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), supportedLanguages.first())
 
+    val lastActiveDate: StateFlow<String?> = userPreferences.lastActiveDate.stateIn(viewModelScope, SharingStarted.Eagerly, null)
+
     suspend fun exportData(includeVocabulary: Boolean, includeSettings: Boolean): String {
         var courses: List<Course>? = null
         var words: List<Word>? = null
         var states: List<ReviewState>? = null
+        var passages: List<com.language.finebulary.data.model.IeltsPassageEntity>? = null
+        var dailyProgress: List<com.language.finebulary.data.model.DailyProgress>? = null
         var settings: Map<String, String>? = null
 
         if (includeVocabulary) {
             courses = repository.allCourses.first()
             words = repository.getAllWordsRaw()
             states = repository.getAllReviewStatesRaw()
+            passages = repository.getAllIeltsPassagesRaw()
+            dailyProgress = repository.getAllDailyProgressRaw()
         }
 
         if (includeSettings) {
             settings = mapOf(
                 "themeMode" to themeMode.value.name,
+                "appThemeColor" to appThemeColor.value.name,
+                "folderViewStyle" to folderViewStyle.value.name,
                 "pexelsKey" to (pexelsApiKey.value ?: ""),
                 "geminiKey" to (geminiApiKey.value ?: ""),
                 "groqKey" to (groqApiKey.value ?: ""),
                 "openaiKey" to (openaiApiKey.value ?: ""),
                 "deepseekKey" to (deepseekApiKey.value ?: ""),
                 "openrouterKey" to (openrouterApiKey.value ?: ""),
+                "elevenlabsKey" to (elevenlabsApiKey.value ?: ""),
+                "azureSpeechKey" to (azureSpeechApiKey.value ?: ""),
+                "deepgramKey" to (deepgramApiKey.value ?: ""),
+                "audioProvider" to audioProvider.value,
+                "deviceTtsEngine" to (deviceTtsEngine.value ?: ""),
                 "activeProvider" to activeAiProvider.value.name,
                 "geminiModel" to selectedGeminiModel.value,
                 "groqModel" to selectedGroqModel.value,
@@ -336,48 +349,73 @@ class HomeViewModel @Inject constructor(
                 "soundEnabled" to soundEnabled.value.toString(),
                 "hapticEnabled" to hapticEnabled.value.toString(),
                 "appLanguage" to appLanguage.value,
+                "translationProvider" to translationProvider.value,
+                "exampleSentenceSource" to exampleSentenceSource.value,
+                "dailyGoal" to dailyGoal.value.toString(),
                 "masteryTarget" to masteryTarget.value.toString(),
                 "srsIntensity" to srsIntensity.value.toString(),
+                "srsMaxDailyCap" to srsMaxDailyCap.value.toString(),
+                "srsPrioritizeWeakWords" to srsPrioritizeWeakWords.value.toString(),
+                "ttsSpeedRate" to ttsSpeedRate.value.toString(),
+                "currentStreak" to currentStreak.value.toString(),
+                "lastActiveDate" to (lastActiveDate.value ?: ""),
                 "isOnboardingCompleted" to isOnboardingCompleted.value.toString(),
-                "autoCloudBackup" to autoCloudBackup.value.toString(),
+                "autoCloudBackup" to autoCloudBackup.value.toString()
             )
         }
-        return BackupManager.createBackupJson(courses, words, states, settings)
+        return BackupManager.createBackupJson(courses, words, states, passages, dailyProgress, settings)
     }
 
     fun importData(json: String) {
         viewModelScope.launch {
             val backup = BackupManager.parseBackupJson(json) ?: return@launch
-            backup.courses?.let { c ->
-                backup.words?.let { w ->
-                    backup.reviewStates?.let { s -> repository.importFullData(c, w, s) }
-                }
+            val c = backup.courses ?: emptyList()
+            val w = backup.words ?: emptyList()
+            val s = backup.reviewStates ?: emptyList()
+            if (c.isNotEmpty() || w.isNotEmpty() || backup.ieltsPassages != null || backup.dailyProgress != null) {
+                repository.importFullData(c, w, s, backup.ieltsPassages, backup.dailyProgress)
             }
-            backup.settings?.let { s ->
-                s["themeMode"]?.let { try { setThemeMode(ThemeMode.valueOf(it)) } catch (_: Exception) {} }
-                s["pexelsKey"]?.let { setPexelsApiKey(it) }
-                s["geminiKey"]?.let { setGeminiApiKey(it) }
-                s["groqKey"]?.let { setGroqApiKey(it) }
-                s["openaiKey"]?.let { setOpenAiApiKey(it) }
-                s["deepseekKey"]?.let { setDeepseekApiKey(it) }
-                s["openrouterKey"]?.let { setOpenrouterApiKey(it) }
-                s["activeProvider"]?.let { try { setActiveAiProvider(AiServiceProvider.valueOf(it)) } catch (_: Exception) {} }
-                s["geminiModel"]?.let { userPreferences.setGeminiModel(it) }
-                s["groqModel"]?.let { userPreferences.setGroqModel(it) }
-                s["openaiModel"]?.let { userPreferences.setOpenAiModel(it) }
-                s["deepseekModel"]?.let { userPreferences.setDeepseekModel(it) }
-                s["openrouterModel"]?.let { userPreferences.setOpenrouterModel(it) }
-                s["showLegacyModels"]?.let { setShowLegacyModels(it.toBoolean()) }
-                s["remindersEnabled"]?.let { setRemindersEnabled(it.toBoolean()) }
-                s["reminderHour"]?.let { h -> s["reminderMinute"]?.let { m -> setReminderTime(h.toInt(), m.toInt()) } }
-                s["dailyNotificationCount"]?.let { setDailyNotificationCount(it.toInt()) }
-                s["soundEnabled"]?.let { setSoundEnabled(it.toBoolean()) }
-                s["hapticEnabled"]?.let { setHapticEnabled(it.toBoolean()) }
-                s["appLanguage"]?.let { setAppLanguage(it) }
-                s["masteryTarget"]?.let { setMasteryTarget(it.toInt()) }
-                s["srsIntensity"]?.let { setSrsIntensity(it.toFloat()) }
-                s["isOnboardingCompleted"]?.let { userPreferences.setOnboardingCompleted(it.toBoolean()) }
-                s["autoCloudBackup"]?.let { setAutoCloudBackup(it.toBoolean()) }
+            backup.settings?.let { settings ->
+                settings["themeMode"]?.let { try { setThemeMode(ThemeMode.valueOf(it)) } catch (_: Exception) {} }
+                settings["appThemeColor"]?.let { try { setAppThemeColor(com.language.finebulary.data.pref.AppThemeColor.valueOf(it)) } catch (_: Exception) {} }
+                settings["folderViewStyle"]?.let { try { setFolderViewStyle(com.language.finebulary.data.pref.FolderViewStyle.valueOf(it)) } catch (_: Exception) {} }
+                settings["pexelsKey"]?.let { setPexelsApiKey(it) }
+                settings["geminiKey"]?.let { setGeminiApiKey(it) }
+                settings["groqKey"]?.let { setGroqApiKey(it) }
+                settings["openaiKey"]?.let { setOpenAiApiKey(it) }
+                settings["deepseekKey"]?.let { setDeepseekApiKey(it) }
+                settings["openrouterKey"]?.let { setOpenrouterApiKey(it) }
+                settings["elevenlabsKey"]?.let { setElevenlabsApiKey(it) }
+                settings["azureSpeechKey"]?.let { setAzureSpeechApiKey(it) }
+                settings["deepgramKey"]?.let { setDeepgramApiKey(it) }
+                settings["audioProvider"]?.let { setAudioProvider(it) }
+                settings["deviceTtsEngine"]?.let { setDeviceTtsEngine(it.ifBlank { null }) }
+                settings["activeProvider"]?.let { try { setActiveAiProvider(AiServiceProvider.valueOf(it)) } catch (_: Exception) {} }
+                settings["geminiModel"]?.let { userPreferences.setGeminiModel(it) }
+                settings["groqModel"]?.let { userPreferences.setGroqModel(it) }
+                settings["openaiModel"]?.let { userPreferences.setOpenAiModel(it) }
+                settings["deepseekModel"]?.let { userPreferences.setDeepseekModel(it) }
+                settings["openrouterModel"]?.let { userPreferences.setOpenrouterModel(it) }
+                settings["showLegacyModels"]?.let { setShowLegacyModels(it.toBoolean()) }
+                settings["remindersEnabled"]?.let { setRemindersEnabled(it.toBoolean()) }
+                settings["reminderHour"]?.let { h -> settings["reminderMinute"]?.let { m -> setReminderTime(h.toInt(), m.toInt()) } }
+                settings["dailyNotificationCount"]?.let { setDailyNotificationCount(it.toInt()) }
+                settings["soundEnabled"]?.let { setSoundEnabled(it.toBoolean()) }
+                settings["hapticEnabled"]?.let { setHapticEnabled(it.toBoolean()) }
+                settings["appLanguage"]?.let { setAppLanguage(it) }
+                settings["translationProvider"]?.let { setTranslationProvider(it) }
+                settings["exampleSentenceSource"]?.let { userPreferences.setExampleSentenceSource(it) }
+                settings["dailyGoal"]?.let { userPreferences.setDailyGoal(it.toInt()) }
+                settings["masteryTarget"]?.let { setMasteryTarget(it.toInt()) }
+                settings["srsIntensity"]?.let { setSrsIntensity(it.toFloat()) }
+                settings["srsMaxDailyCap"]?.let { setSrsMaxDailyCap(it.toInt()) }
+                settings["srsPrioritizeWeakWords"]?.let { setSrsPrioritizeWeakWords(it.toBoolean()) }
+                settings["ttsSpeedRate"]?.let { setTtsSpeedRate(it.toFloat()) }
+                settings["currentStreak"]?.let { streak ->
+                    userPreferences.setStreakData(streak.toInt(), settings["lastActiveDate"]?.ifBlank { null })
+                }
+                settings["isOnboardingCompleted"]?.let { userPreferences.setOnboardingCompleted(it.toBoolean()) }
+                settings["autoCloudBackup"]?.let { setAutoCloudBackup(it.toBoolean()) }
             }
         }
     }

@@ -230,22 +230,12 @@ fun AddWordDialog(
                     shape = MaterialTheme.shapes.small,
                     singleLine = true,
                     trailingIcon = {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
+                        IconButton(onClick = {
                             if (front.isNotBlank()) {
-                                IconButton(onClick = { TtsManager.speak(front) }) {
-                                    Icon(Icons.AutoMirrored.Filled.VolumeUp, contentDescription = "Listen", tint = MaterialTheme.colorScheme.primary)
-                                }
-                                IconButton(onClick = { TtsManager.speak(front, isSlow = true) }) {
-                                    Text("🐢", fontSize = 18.sp)
-                                }
+                                onTranslate(front, course.targetLanguageCode, course.nativeLanguageCode)
                             }
-                            IconButton(onClick = {
-                                if (front.isNotBlank()) {
-                                    onTranslate(front, course.targetLanguageCode, course.nativeLanguageCode)
-                                }
-                            }) {
-                                Icon(Icons.Default.Refresh, contentDescription = stringResource(R.string.auto_translate), tint = MaterialTheme.colorScheme.primary)
-                            }
+                        }) {
+                            Icon(Icons.Default.Refresh, contentDescription = stringResource(R.string.auto_translate), tint = MaterialTheme.colorScheme.primary)
                         }
                     },
                     keyboardActions = KeyboardActions(onDone = {
@@ -254,6 +244,37 @@ fun AddWordDialog(
                         }
                     })
                 )
+
+                if (front.isNotBlank()) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 2.dp),
+                        horizontalArrangement = Arrangement.End,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        AssistChip(
+                            onClick = { TtsManager.speak(front) },
+                            label = { Text("Dinle", style = MaterialTheme.typography.labelSmall) },
+                            leadingIcon = {
+                                Icon(Icons.AutoMirrored.Filled.VolumeUp, contentDescription = null, modifier = Modifier.size(16.dp))
+                            },
+                            shape = MaterialTheme.shapes.extraSmall,
+                            colors = AssistChipDefaults.assistChipColors(
+                                containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+                            )
+                        )
+                        Spacer(Modifier.width(8.dp))
+                        AssistChip(
+                            onClick = { TtsManager.speak(front, isSlow = true) },
+                            label = { Text("Yavaş 🐢", style = MaterialTheme.typography.labelSmall) },
+                            shape = MaterialTheme.shapes.extraSmall,
+                            colors = AssistChipDefaults.assistChipColors(
+                                containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+                            )
+                        )
+                    }
+                }
 
                 if (detectedLanguageName != null) {
                     Text(

@@ -252,6 +252,13 @@
     <string name="base_form_label">Base Form: %1$s</string>
     <string name="root_word_label">Root Word: %1$s</string>
 
+    <!-- Changelog v2.3.7 -->
+    <string name="changelog_v2_3_7_title">Version 2.3.7 - Complete Backups, Offline Idioms &amp; UI Polish</string>
+    <string name="changelog_v2_3_7_item_1">Fixed Backup &amp; Restore engine: Academy reading passages, test progress, daily streaks, custom voice keys, theme colors, and study goals are now 100% backed up</string>
+    <string name="changelog_v2_3_7_item_2">Added Built-in Offline Idiom &amp; Phrasal Verb Dictionary (150+ expressions like \"a load of waffle\" -&gt; \"boş konuşma\") with non-literal multi-meaning Google Translate lookup</string>
+    <string name="changelog_v2_3_7_item_3">Redesigned Academy Creation Wizard with CEFR level pills, topic suggestions, and dynamic 4-step AI generation screen; cleaned up reading passage view</string>
+    <string name="changelog_v2_3_7_item_4">Expanded Word input field to prevent text truncation by placing audio buttons as sleek AssistChips, added Move Words, and .finebulary system file association</string>
+
     <!-- Changelog v2.3.6 -->
     <string name="changelog_v2_3_6_title">Version 2.3.6 - Frozen Snapshot Duel &amp; Co-op Mode</string>
     <string name="changelog_v2_3_6_item_1">Introduced Self-Contained Frozen Snapshot Duel Packets for 100% fair duels</string>
@@ -480,7 +487,15 @@
     <string name="challenge_share_title">Challenge Friend</string>
     <string name="word_already_exists">This word already exists in this folder!</string>
     <string name="close">Close</string>
+    <string name="sentence_translation_title">Sentence Translation &amp; Practice</string>
     <string name="move_to_folder">Move to Folder</string>
+    <string name="academy_wizard_step1">1. Languages &amp; Level</string>
+    <string name="academy_wizard_step2">2. Topic &amp; Category</string>
+    <string name="academy_suggested_topics">Quick Topic Suggestions:</string>
+    <string name="academy_gen_step_1">🧠 Selecting topic and academic vocabulary...</string>
+    <string name="academy_gen_step_2">✍️ Drafting CEFR-level reading passage...</string>
+    <string name="academy_gen_step_3">🌐 Processing translations and keyword definitions...</string>
+    <string name="academy_gen_step_4">🎯 Crafting exam comprehension questions...</string>
     <string name="select_destination_folder">Select Destination Folder</string>
     <string name="move_words_title">Move Words</string>
     <string name="move_confirm">Move</string>

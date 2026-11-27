@@ -10,7 +10,7 @@ interface GoogleTranslateApiService {
         @Query("client") client: String = "gtx",
         @Query("sl") source: String = "auto",
         @Query("tl") target: String,
-        @Query("dt") dataType: String = "t",
+        @Query("dt") dataTypes: List<String> = listOf("t", "bd", "at", "md"),
         @Query("q") text: String
     ): ResponseBody
 }
